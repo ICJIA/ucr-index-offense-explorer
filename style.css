@@ -1,0 +1,87 @@
+@import url("//fonts.googleapis.com/css?family=Fjalla One|Cabin:400");
+
+
+/* global*/
+h1 {
+  font-family:"Fjalla One";
+}
+
+h3 {
+  font-family:"Fjalla One";
+}
+
+p {
+  font-family:"Georgia";
+}
+
+#downloadData {
+  color: #000;
+}
+
+#social {
+  margin:5px;
+  color:#466c8c;
+}
+
+#social:hover{
+  color:#fff;
+}
+
+/* main-header */
+.skin-blue .main-header .logo {
+  font-family:"Georgia";
+  background-color: #466c8c;
+}
+                            
+.skin-blue .main-header .logo:hover {
+  background-color: #466c8c;
+}
+                              
+.skin-blue .main-header .navbar {
+  background-color: #466c8c;
+}
+
+.skin-blue .main-header .navbar .sidebar-toggle:hover{
+  background-color: #e68a00;
+}
+
+
+/* main sidebar */
+.skin-blue .main-sidebar {
+  background-color: #1f3641;
+}
+        
+.skin-blue .main-sidebar .sidebar .sidebar-menu .active a{
+  background-color: #000;
+}
+        
+.skin-blue .main-sidebar .sidebar .sidebar-menu a{
+  background-color: #0f0;
+  color: #000000;
+}
+        
+.skin-blue .main-sidebar .sidebar .sidebar-menu a:hover{
+  background-color: #ff69b4;
+}
+
+
+/* content wrapper */
+.skin-blue .content-wrapper {
+  background-color: #fff;
+}
+
+.skin-blue .content-wrapper .shiny-html-output p{
+  font-size: 16px;
+}
+
+.skin-blue .content-wrapper .highcharts-container {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.skin-blue .content-wrapper .leaflet-container {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
