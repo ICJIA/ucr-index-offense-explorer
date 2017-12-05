@@ -1,5 +1,7 @@
 # ICJIA Dashboard Demo
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 This repository stores R scripts as well as other necessary files for an R Shiny app dashboard created as a demo project by an ICJIA Research Analyst. 
 
 
