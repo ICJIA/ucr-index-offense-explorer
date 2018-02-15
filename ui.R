@@ -22,12 +22,11 @@ library(shinydashboard)
 library(DT)
 library(leaflet)
 library(highcharter)
-library(readr)
 library(dplyr)
 
 
 # import data
-mydata <- read.csv('data.csv')
+load("data/mydata.rda")
 
 
 # DEFINE UI #
@@ -45,44 +44,44 @@ ui <- dashboardPage(
   dashboardSidebar(
     
     fluidRow(
-      column(12, style = 'margin-top:20px;',
+      column(12, style = "margin-top:20px;",
              actionButton("reset", "Reset")
       )
     ),
     
     radioButtons(
-      'crimeCat',
-      'Select crime category',
-      choices = c('All', 'Property', 'Violent'),
-      selected = 'All'
+      "crimeCat",
+      "Select crime category",
+      choices = c("All", "Property", "Violent"),
+      selected = "All"
     ),
     
     selectInput(
-      'region',
-      'Select region',
+      "region",
+      "Select region",
       choices = c("All", sort(unique(as.character(mydata$region)))),
-      selected = 'All'
+      selected = "All"
     ),
     
     
     selectInput(
-      'countyType',
-      'Select county type',
+      "countyType",
+      "Select county type",
       choices = c("All", sort(unique(as.character(mydata$countyType)))),
-      selected = 'All'
+      selected = "All"
     ),
     
     
     selectInput(
-      'county',
-      'Select county',
+      "county",
+      "Select county",
       choices = c("All", sort(unique(as.character(mydata$county)))),
-      selected = 'All'
+      selected = "All"
     ),
     
     
     fluidRow(
-      column(12, style = 'padding:20px;', offset = 2,
+      column(12, style = "padding:20px;", offset = 2,
              downloadButton(
                "downloadData",
                "Download Data"
@@ -91,29 +90,29 @@ ui <- dashboardPage(
     ),
     
     fluidRow(
-      column(12, style = 'font-size: 10px; margin-top:155px; text-align:center;',
+      column(12, style = "font-size: 10px; margin-top:155px; text-align:center;",
              a(icon("facebook-square", "fa-3x"),
-               href = 'http://www.facebook.com/ICJIA',
-               id = 'social'),
+               href = "http://www.facebook.com/ICJIA",
+               id = "social"),
              a(icon("twitter-square", "fa-3x"),
-               href = 'http://www.twitter.com/ICJIA_Illinois',
-               id = 'social'),
+               href = "http://www.twitter.com/ICJIA_Illinois",
+               id = "social"),
              a(icon("youtube-square", "fa-3x"),
-               href = 'https://www.youtube.com/channel/UCtZMzk8D3P4OixYTwsfPeKA',
-               id = 'social')
+               href = "https://www.youtube.com/channel/UCtZMzk8D3P4OixYTwsfPeKA",
+               id = "social")
       ),
-      column(12, style = 'font-size: 10px; margin-top:10px; text-align:center;',
-             p('(312) 793-8550 - Fax: (312) 793-8422-',
-               a('cja.irc@illinois.gov',
-                 href = 'mailto:cja.irc@illinois.gov',
-                 id = 'social')
+      column(12, style = "font-size: 10px; margin-top:10px; text-align:center;",
+             p("(312) 793-8550 - Fax: (312) 793-8422-",
+               a("cja.irc@illinois.gov",
+                 href = "mailto:cja.irc@illinois.gov",
+                 id = "social")
              )
       ),
-      column(12, style = 'text-align:center;',
-             p(HTML('&copy;'), '2017',
-               a('Illinois Criminal Justice Information Authority',
-                 href = 'http://www.icjia.state.il.us/',
-                 id = 'social')
+      column(12, style = "text-align:center;",
+             p(HTML("&copy;"), "2017",
+               a("Illinois Criminal Justice Information Authority",
+                 href = "http://www.icjia.state.il.us/",
+                 id = "social")
              )
       )
     )
@@ -123,20 +122,20 @@ ui <- dashboardPage(
   dashboardBody(
     
     fluidRow(
-      column(8, h1(textOutput('current'))),
-      column(4, a(img(src = 'logo-icjia-small-blue-3.png',
-                      align = 'right',
-                      style = 'height:50px;'),
-                  href = 'http://www.icjia.state.il.us/'))
+      column(8, h1(textOutput("current"))),
+      column(4, a(img(src = "logo-icjia-small-blue-3.png",
+                      align = "right",
+                      style = "height:50px;"),
+                  href = "http://www.icjia.state.il.us/"))
     ),
     
     fluidRow(
       column(12,
-             p('This dashboard offers an interactive way to explore the latest',
-               em('Crime in Illinois Annual Uniform Crime Report'),
-               'data (2011-2015). All data sets used here are freely available at',
-               a('Illinois State Police website.', href='http://www.isp.state.il.us/crime/ucrhome.cfm'),
-               'You can also download the filtered data for this dashboard by clicking the "Download Data" button on the sidebar menu.'))
+             p("This dashboard offers an interactive way to explore the latest",
+               em("Crime in Illinois Annual Uniform Crime Report"),
+               "data (2011-2015). All data sets used here are freely available at",
+               a("Illinois State Police website.", href="http://www.isp.state.il.us/crime/ucrhome.cfm"),
+               "You can also download the filtered data for this dashboard by clicking the \"Download Data\" button on the sidebar menu."))
     ),
     
     tags$hr(style = "border-color: #ddd;"),
@@ -155,13 +154,13 @@ ui <- dashboardPage(
     ),
     
     fluidRow(
-      column(12, style = 'padding:20px;',
+      column(12, style = "padding:20px;",
              h3("Data Table"),
              dataTableOutput("dataTable"))
     ),
     
     tags$head(
-      includeCSS(path = 'style.css')
+      includeCSS(path = "css/style.css")
     )
   )
 )

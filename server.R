@@ -20,20 +20,17 @@ options(shiny.sanitize.errors = FALSE)
 
 # import packages
 library(shiny)
-library(shinydashboard)
 library(DT)
 library(rgdal)
 library(leaflet)
 library(highcharter)
-library(readr)
 library(dplyr)
 library(tidyr)
 
 
 # import data
-mydata <- read_csv('data.csv')
-mymap <- readOGR('.', 'ILcounties') %>%
-  spTransform(CRS("+proj=longlat +ellps=GRS80"))
+load("data/mydata.rda")
+load("data/mymap.rda")
 
 
 # DEFINE SERVER LOGIC #
