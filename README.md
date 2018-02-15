@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# icjia-dashboard-demo
-=======
 # ICJIA Dashboard Demo
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -23,5 +20,4 @@ dependencies <- c("shiny", "shinydashboard", "DT", "rgdal", "leaflet", "highchar
 install.packages(dependencies)
 ```
 
-Once all packages are installed, click `Run App` button to see the dashboard.
->>>>>>> 364c20954ad22c96d2a01a53cce0d1f12a1b4a7a
+Once all packages are installed, you are ready to start the app with the `shiny::runApp()` command, or if you are using RStudio, by clicking the `Run App` button.
