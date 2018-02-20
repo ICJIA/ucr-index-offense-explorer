@@ -26,7 +26,7 @@ RUN R -e "install.packages(c('shinydashboard', 'DT', 'rgdal', 'leaflet', 'highch
 
 # copy the app to the image
 RUN mkdir /root/icjia-dashboard-demo
-COPY icjia-dashboard-demo /root/icjia-dashboard-demo
+COPY app /root/icjia-dashboard-demo
 
 COPY Rprofile.site /usr/lib/R/etc/
 
