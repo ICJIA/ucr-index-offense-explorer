@@ -14,22 +14,28 @@ RUN apt-get update && apt-get install -y \
     libssh2-1-dev \
     libssl1.0.0
 
-# system library dependency for the icjia-dashboard-demo app
+# system library dependency for the app
 RUN apt-get update && apt-get install -y \
     libmpfr-dev
 
-# basic shiny functionality
+# install R packages for basic shiny functionality
 RUN R -e "install.packages(c('shiny', 'rmarkdown'), repos='https://cloud.r-project.org/')"
 
-# install dependencies of the icjia-dashboard-demo app
+# install igraph, rgdal requirement
+RUN apt-get update && apt-get install -y \
+    libxml2-dev \
+    libgdal-dev \
+    libproj-dev
+
+# install R packages specfic to the app
 RUN R -e "install.packages(c('shinydashboard', 'DT', 'rgdal', 'leaflet', 'highcharter', 'dplyr', 'tidyr'), repos='https://cloud.r-project.org/')"
 
 # copy the app to the image
-RUN mkdir /root/icjia-dashboard-demo
-COPY icjia-dashboard-demo /root/icjia-dashboard-demo
+RUN mkdir /root/app
+COPY app /root/app
 
 COPY Rprofile.site /usr/lib/R/etc/
 
 EXPOSE 3838
 
-CMD ["R", "-e", "shiny::runApp('/root/icjia-dashboard-demo')"]
+CMD ["R", "-e", "shiny::runApp('/root/app')"]
