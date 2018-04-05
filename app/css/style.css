@@ -1,7 +1,146 @@
 @import url("//fonts.googleapis.com/css?family=Fjalla One|Cabin:400");
+@import url("//fonts.googleapis.com/css?family=Gentium Book Basic|Cabin:400");
+@import url("//fonts.googleapis.com/css?family=Lato|Cabin:400");
+
+:root {
+    --color-social: #466c8c;
+    --color-button: #337ab7;
+    --color-kpi: #f28869;
+    --color-white: #fff;
+    --color-grey: #ddd;
+    --color-footer: #1f3641;
+}
 
 
-/* global*/
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Gentium Book Basic', serif;
+  font-size: 16px;
+  
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Fjalla One';
+}
+
+h1#title {
+  margin-top: 0;
+}
+
+h4 {
+  font-weight: bold;
+}
+
+ul {
+  margin-top: 10px;
+}
+
+
+#logo {
+  height: 60px;
+}
+
+#text-identity {
+  font-weight: 700;
+  font-size: 16px;
+  font-family: 'Lato';
+  text-transform: uppercase;
+}
+
+#social {
+  margin:5px;
+  color: var(--color-social);
+}
+
+#social:hover {
+  color: var(--color-white);
+}
+
+
+.container-fluid {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+.container-fluid > h2 {
+  margin: auto;
+  width: 100%;
+  max-width: 1280px;
+}
+
+.row {
+  flex: 1 0 auto;
+  margin: 10px auto 30px auto;
+  width: 100%;
+  max-width: 1280px;
+}
+
+.well {
+  font-size: 14px;
+}
+
+.kpis {
+  display: flex;
+}
+
+.kpi {
+  width: 23%;
+  margin: 0 auto;
+  padding: 0 15px;
+  border: 1px solid var(--color-grey);
+  border-radius: 5px;
+  background: var(--color-kpi);
+  color: var(--color-white);
+}
+
+.highcharts-container,
+.leaflet-container {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-grey);
+  border-radius: 5px;
+}
+
+.btn, .btn-default {
+  background-color: var(--color-button);
+  color: var(--color-grey);
+}
+
+.btn:hover,
+.btn-default:hover,
+.btn-default:focus, 
+.btn-default:active:focus, 
+.btn-default:active:hover {
+  background-color: var(--color-social);
+  color: var(--color-grey);
+}
+
+.tab-name {
+  font-size: 14px;
+  font-family: 'Lato';
+  text-transform: uppercase;
+}
+
+.footer {
+  flex-shrink: 0;
+  background-color: var(--color-footer);
+  color: white;
+  font-family: 'Lato';
+  text-align: center;
+  padding: 30px;
+}
+
+/*
+global
 h1 {
   font-family:"Fjalla One";
 }
@@ -27,7 +166,7 @@ p {
   color:#fff;
 }
 
-/* main-header */
+main-header
 .skin-blue .main-header .logo {
   font-family:"Georgia";
   background-color: #466c8c;
@@ -46,7 +185,7 @@ p {
 }
 
 
-/* main sidebar */
+main sidebar
 .skin-blue .main-sidebar {
   background-color: #1f3641;
 }
@@ -65,7 +204,7 @@ p {
 }
 
 
-/* content wrapper */
+content wrapper
 .skin-blue .content-wrapper {
   background-color: #fff;
 }
@@ -85,3 +224,4 @@ p {
   border: 1px solid #ddd;
   border-radius: 5px;
 }
+*/
