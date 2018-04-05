@@ -6,7 +6,7 @@
 # Script description:
 # The current script is to define server logic for the Shiny application
 # for ISP data.
-# (develop) Working toward version 2: Without shinydashboard
+# (develop) v2.0: Without shinydashboard
 #---------------------------------------------------------------------------
 # Table of contents:
 # * PREPARE FOR THE SESSION
@@ -486,43 +486,6 @@ server <- function (input, output, session) {
         label = ~as.character(CNTYNAM_LO)
       )
   })
-
-  # output$map <- renderPlot({
-  # 
-  #   map_selected <- mymap
-  # 
-  #   if(input$region != "All"){
-  #     if(input$region == 'Cook'){
-  #       map_selected <- map_selected[map_selected$CNTYNAM_LO == 'Cook',]
-  #     } else {
-  #       map_selected <- map_selected[map_selected$REGION == input$region,]
-  #     }
-  #   }
-  #   if(input$countyType != "All"){
-  #     if(input$countyType == 'Cook'){
-  #       map_selected <- map_selected[map_selected$CNTYNAM_LO == 'Cook',]
-  #     } else {
-  #       map_selected <- map_selected[map_selected$COUNTYTYPE == input$countyType,]
-  #     }
-  #   }
-  #   if(input$county != "All"){
-  #     map_selected <- map_selected[map_selected$CNTYNAM_LO == input$county,]
-  #   }
-  #   
-  #   qtm(shp=mymap,
-  #       title='',
-  #       bg.color='lightgrey',
-  #       borders='grey',
-  #       fill='lightgrey',
-  #       fill.alpha=.3,
-  #       frame=FALSE) + 
-  #     qtm(shp=map_selected,
-  #         borders='grey',
-  #         fill='steelblue',
-  #         fill.alpha=.8,
-  #         frame=FALSE)
-  #   
-  # })
 
   # data table--------------------------------------------------------------
   output$dataTable <- renderDataTable({
