@@ -63,6 +63,14 @@ ui <- shinyUI(fluidPage(
         choices = c("All", "Property", "Violent"),
         selected = "All"
       ),
+      sliderInput(
+        "range",
+        "Select years",
+        min = min(as.integer(mydata$year)),
+        max = max(as.integer(mydata$year)),
+        value = c(min(as.integer(mydata$year)), max(as.integer(mydata$year))),
+        step = 1
+      ),
       selectInput(
         "region",
         "Select region",
@@ -113,9 +121,9 @@ ui <- shinyUI(fluidPage(
       ),
       
       fluidRow(
-        column(4, h3(textOutput("lineChart_title")), withSpinner(highchartOutput("lineChart"), type = 4)),
-        column(4, h3(textOutput("pieChart_title")), withSpinner(highchartOutput("pieChart"), type = 4)),
-        column(4, h3("Selected Area"), withSpinner(leafletOutput("map"), type = 4))
+        column(4, h3(textOutput("line_title")), withSpinner(highchartOutput("line"), type = 4)),
+        column(4, h3(textOutput("pie_title")), withSpinner(highchartOutput("pie"), type = 4)),
+        column(4, h3(textOutput("map_title")), withSpinner(leafletOutput("map"), type = 4))
       ),
       
       fluidRow(

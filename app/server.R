@@ -49,6 +49,12 @@ server <- function (input, output, session) {
       inputId  = "crimeCat",
       selected = "All"
     )
+
+    updateSliderInput(
+      session,
+      inputId = "range",
+      value = c(min(as.integer(mydata$year)), max(as.integer(mydata$year)))
+    )
     
     updateSelectInput(
       session,
@@ -74,7 +80,7 @@ server <- function (input, output, session) {
   
   
   # filtering data----------------------------------------------------------
-  observeEvent(input$region,{
+  observeEvent(input$region, {
 
     if (input$region == "All") {
       updateSelectInput(
@@ -117,7 +123,7 @@ server <- function (input, output, session) {
     }
   })
   
-  observeEvent(input$type,{
+  observeEvent(input$type, {
     
     if (input$type == "All") {
       updateSelectInput(
@@ -153,7 +159,9 @@ server <- function (input, output, session) {
  
   # data to download--------------------------------------------------------
   dataDownload <- reactive({
-    data_download <- mydata
+    data_download <- mydata %>%
+      filter(year %in% seq(input$range[1], input$range[2]))
+    
     if (input$region != "All") {
       data_download <- filter(data_download, region == input$region)
     }
@@ -209,7 +217,8 @@ server <- function (input, output, session) {
   # Value Boxes ------------------------------------------------------------
   output$kpi_box_1 <- renderUI({
     
-    data_output <- data_output %>% filter(year == max(data_output$year))
+    data_output <- data_output %>%
+      filter(year == input$range[2])
     
     if (input$region != "All") {
       data_output <- data_output[data_output$region == input$region, ]
@@ -237,7 +246,7 @@ server <- function (input, output, session) {
       tags$h1(value),
       tags$p(
         span(icon("exclamation-triangle"), style="color:red;"),
-        paste0("Offenses in ", max(data_output$year))
+        paste0("Offenses in ", input$range[2])
       )
     )
   })
@@ -254,7 +263,7 @@ server <- function (input, output, session) {
       data_output <- data_output[data_output$county == input$county, ]
     }
     
-    data_max <- data_output[data_output$year == max(data_output$year), ]
+    data_max <- data_output[data_output$year == input$range[2], ]
     crime_max <- sum(data_max$violent, data_max$property, na.rm = TRUE)
     pop_max <- sum(data_max$population, na.rm = TRUE)
     
@@ -270,7 +279,7 @@ server <- function (input, output, session) {
       tags$h1(round(value, 2)),
       tags$p(
         span(icon("bar-chart"), style="color:yellow;"),
-        paste0("Crime rate in ", max(data_output$year), " (per 100K)")
+        paste0("Crime rate in ", input$range[2], " (per 100K)")
       )
     )
   })
@@ -287,8 +296,8 @@ server <- function (input, output, session) {
       data_output <- data_output[data_output$county == input$county, ]
     }
     
-    data_max <- data_output[data_output$year == max(data_output$year), ]
-    data_pre <- data_output[data_output$year == max(data_output$year) - 1, ]
+    data_max <- data_output[data_output$year == input$range[2], ]
+    data_pre <- data_output[data_output$year == input$range[2] - 1, ]
     
     value_max <- sum(data_max$violent, data_max$property, na.rm = TRUE)
     value_pre <- sum(data_pre$violent, data_pre$property, na.rm = TRUE)
@@ -308,7 +317,7 @@ server <- function (input, output, session) {
       tags$h1(value),
       tags$p(
         span(icon("percent"), style="color:#337ab7;"),
-        paste0("Percent Change, ", max(data_output$year) - 1, "-", substr(max(data_output$year), 3, 4))
+        paste0("Change, ", input$range[2] - 1, "-", substr(input$range[2], 3, 4))
       )
     )
   })
@@ -325,8 +334,8 @@ server <- function (input, output, session) {
       data_output <- data_output[data_output$county == input$county, ]
     }
     
-    data_max <- data_output[data_output$year == max(data_output$year), ]
-    data_min <- data_output[data_output$year == min(data_output$year), ]
+    data_max <- data_output[data_output$year == input$range[2], ]
+    data_min <- data_output[data_output$year == input$range[1], ]
     
     value_max <- sum(data_max$violent, data_max$property, na.rm = TRUE)
     value_min <- sum(data_min$violent, data_min$property, na.rm = TRUE)
@@ -346,14 +355,14 @@ server <- function (input, output, session) {
       tags$h1(value),
       tags$p(
         span(icon("percent"), style="color:#337ab7;"),
-        paste0("Percent Change, ", min(data_output$year), "-", substr(max(data_output$year), 3, 4))
+        paste0("Change, ", input$range[1], "-", substr(input$range[2], 3, 4))
       )
     )
   })
   
 
   # historical trend line chart---------------------------------------------
-  output$lineChart_title <- renderText({
+  output$line_title <- renderText({
     
     text_output <- "Historical Trend"
     
@@ -363,7 +372,10 @@ server <- function (input, output, session) {
     text_output
   })
   
-  output$lineChart <- renderHighchart({
+  output$line <- renderHighchart({
+    
+    data_output <- data_output %>%
+      filter(year %in% seq(input$range[1], input$range[2]))
     
     if(input$region != "All"){
       data_output <- data_output[data_output$region == input$region,]
@@ -395,10 +407,10 @@ server <- function (input, output, session) {
   })
 
   
-  # crime categories pie chart----------------------------------------------
-  output$pieChart_title <- renderText({
+  # Offense type pie chart----------------------------------------------
+  output$pie_title <- renderText({
     
-    text_output <- "Crime Categories (2015)"
+    text_output <- paste0("Offense Type (", input$range[2],")")
     
     if(input$crimeCat != "All"){
       text_output <- paste(text_output, input$crimeCat, sep = ": ")
@@ -407,20 +419,22 @@ server <- function (input, output, session) {
   })
   
   
-  output$pieChart <- renderHighchart({
+  output$pie <- renderHighchart({
+    
+    data_pie <- mydata
     
     if (input$region != "All") {
-      data_output <- data_output[data_output$region == input$region,]
+      data_pie <- mydata[mydata$region == input$region,]
     }
     if (input$type != "All") {
-      data_output <- data_output[data_output$type == input$type,]
+      data_pie <- mydata[mydata$type == input$type,]
     }
     if (input$county != "All") {
-      data_output <- data_output[data_output$county == input$county,]
+      data_pie <- mydata[mydata$county == input$county,]
     }
     
-    data_plot <- mydata %>%
-      filter(year == 2015) %>%
+    data_plot <- data_pie %>%
+      filter(year == input$range[2]) %>%
       summarise(
         Murder     = sum(murder, na.rm = TRUE),
         Rape       = sum(rape, na.rm = TRUE),
@@ -451,21 +465,32 @@ server <- function (input, output, session) {
   })
 
   
-  # selected area map-------------------------------------------------------
+  # Distribution map-------------------------------------------------------
+  output$map_title <- renderText({
+    
+    text_output <- paste0("Distribution (", input$range[2],")")
+    
+    if(input$crimeCat != "All"){
+      text_output <- paste(text_output, input$crimeCat, sep=": ")
+    } 
+    text_output
+  })
+  
   output$map <- renderLeaflet({
+    
+    data_output <- data_output %>%
+      filter(year == input$range[2])
 
     if (input$crimeCat == "Property") {
       my_attr <- data_output %>%
-        group_by(name = county) %>%
-        summarise(data = mean(property, na.rm = TRUE))
+        select(name = county, data = property)
     } else if (input$crimeCat == "Violent") {
       my_attr <- data_output %>%
-        group_by(name = county) %>%
-        summarise(data = mean(violent, na.rm = TRUE))
+        select(name = county, data = violent)
     } else {
       my_attr <- data_output %>%
         group_by(name = county) %>%
-        summarise(data = mean(sum(violent, property, na.rm = TRUE), na.rm = TRUE))
+        summarise(data = sum(violent, property, na.rm = TRUE))
     }
       
     map_selected <- mymap
@@ -526,6 +551,9 @@ server <- function (input, output, session) {
 
   # data table--------------------------------------------------------------
   output$dataTable <- renderDataTable({
+    
+    data_output <- data_output %>%
+      filter(year %in% seq(input$range[1], input$range[2]))
 
     if(input$region != "All"){
       data_output <- data_output[data_output$region == input$region, ]
