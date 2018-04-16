@@ -1,15 +1,11 @@
 # Author: Bobae Kang (Bobae.Kang@illinois.gov)
 # Created: 2017-10-31
-# Last revised: 2018-04-05
+# Last revised: 2018-04-16
 # Script title: ui.R
 #---------------------------------------------------------------------------
 # Script description:
 # The current script is to define UI for the Shiny application for ISP data.
 # (develop) v2.0: Without shinydashboard
-#---------------------------------------------------------------------------
-# Table of contents:
-# * PREPARE FOR THE SESSION
-# * DEFINE UI
 #---------------------------------------------------------------------------
 
 
@@ -27,7 +23,8 @@ library(dplyr)
 
 
 # import data
-load("data/mydata.rda")
+load("data/data.rda")
+# load("data/mydata.rda")
 
 
 # DEFINE UI #
@@ -57,7 +54,7 @@ ui <- shinyUI(fluidPage(
     # SIDEBAR
     #---------------------------------------------------------------------------
     sidebarPanel(
-      width = 2,
+      width = 3,
       actionButton("reset", "Reset"),
       hr(),
       radioButtons(
@@ -73,9 +70,9 @@ ui <- shinyUI(fluidPage(
         selected = "All"
       ),
       selectInput(
-        "countyType",
+        "type",
         "Select county type",
-        choices = c("All", sort(unique(as.character(mydata$countyType)))),
+        choices = c("All", sort(unique(as.character(mydata$type)))),
         selected = "All"
       ),
       selectInput(
@@ -91,14 +88,14 @@ ui <- shinyUI(fluidPage(
     # MAIN
     #---------------------------------------------------------------------------
     mainPanel(
-      width = 10,
+      width = 9,
       fluidRow(
         column(
           12,
           h1(textOutput("current"), id="title"),
           p("This dashboard offers an interactive way to explore the latest",
             em("Crime in Illinois Annual Uniform Crime Report"),
-            "data (2011-2015). All data sets used here are freely available at",
+            "data (2001-2015). All data sets used here are freely available at",
             a("Illinois State Police website.", href="http://www.isp.state.il.us/crime/ucrhome.cfm"),
             "You can also download the filtered data for this dashboard by clicking the \"Download\" button on the sidebar menu."
           )
@@ -116,9 +113,9 @@ ui <- shinyUI(fluidPage(
       ),
       
       fluidRow(
-        column(5, h3(textOutput("lineChart_title")), withSpinner(highchartOutput("lineChart"), type = 4)),
+        column(4, h3(textOutput("lineChart_title")), withSpinner(highchartOutput("lineChart"), type = 4)),
         column(4, h3(textOutput("pieChart_title")), withSpinner(highchartOutput("pieChart"), type = 4)),
-        column(3, h3("Selected Area"), withSpinner(leafletOutput("map"), type = 4))
+        column(4, h3("Selected Area"), withSpinner(leafletOutput("map"), type = 4))
       ),
       
       fluidRow(
