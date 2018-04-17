@@ -43,7 +43,8 @@ ui <- shinyUI(fluidPage(
   
   # SHINYJS
   useShinyjs(),
-  extendShinyjs(text = jscode),
+  # extendShinyjs(text = jscode),
+  extendShinyjs(text = jscode, functions = "toggleSidebar"), # for shinyappsio
   
   # TITLE
   titlePanel(
@@ -139,9 +140,11 @@ ui <- shinyUI(fluidPage(
       ),
       
       fluidRow(
-        column(12, style = "padding:20px;",
-               h3("Data Table"),
-               withSpinner(dataTableOutput("dataTable"), type = 4))
+        id="data-table",
+        column(
+          12, style = "padding:20px;",
+          h3("Data Table"),
+          withSpinner(dataTableOutput("dataTable"), type = 4))
       )
     )
   ),

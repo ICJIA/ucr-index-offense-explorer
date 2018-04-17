@@ -28,9 +28,6 @@ library(dplyr)
 
 # import data
 load("data/data.rda")
-# load("data/mydata.rda")
-# load("data/mymap.rda")
-
 
 
 # DEFINE SERVER LOGIC #
@@ -40,9 +37,9 @@ server <- function (input, output, session) {
   # toggle sidebar
   observeEvent(input$toggleSidebar, {
     toggleCssClass("main", "col-sm-9")
+    js$toggleSidebar()
     # toggle(selector = "div.col-sm-3", anim = FALSE)
     # toggleCssClass("main", "col-sm-12")
-    js$toggleSidebar()
   })
 
 

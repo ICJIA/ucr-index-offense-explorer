@@ -53,6 +53,7 @@ ul {
   font-size: 16px;
   font-family: 'Lato';
   text-transform: uppercase;
+  display: none;
 }
 
 button#toggleSidebar {
@@ -67,6 +68,10 @@ button#toggleSidebar:hover {
   background-color: var(--color-grey);
   /*border-color: var(--color-button);*/
   color: var(--color-footer);
+}
+
+#data-table {
+  display: none;
 }
 
 #social {
@@ -107,16 +112,16 @@ button#toggleSidebar:hover {
 
 .kpis {
   display: flex;
+  flex-direction: column;
 }
 
 .kpi {
-  width: 23%;
-  margin: 0 auto;
-  padding: 0 15px;
+  width: 100%;
   border: 1px solid var(--color-grey);
   border-radius: 5px;
   background: var(--color-kpi);
   color: var(--color-white);
+  text-align: center;
 }
 
 .highcharts-container,
@@ -153,4 +158,25 @@ button#toggleSidebar:hover {
   font-family: 'Lato';
   text-align: center;
   padding: 30px;
+}
+
+
+@media (min-width: 768px) {
+  #text-identity {
+    display: inline-block;
+  }
+  
+  #data-table {
+    display: block;
+  }
+  
+  .kpis {
+    flex-direction: row;
+  }
+  
+  .kpi {
+    width: 24%;
+    padding: 0 15px;
+    margin: 0 auto;
+  }
 }
