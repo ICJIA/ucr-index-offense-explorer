@@ -1,6 +1,6 @@
 # Author: Bobae Kang (Bobae.Kang@illinois.gov)
 # Created: 2017-10-31
-# Last revised: 2018-04-16
+# Last revised: 2018-04-17
 # Script title: server.R
 #---------------------------------------------------------------------------
 # Script description:
@@ -17,6 +17,7 @@ options(shiny.sanitize.errors = FALSE)
 
 # import packages
 library(shiny)
+library(shinyjs)
 library(DT)
 library(rgdal)
 library(leaflet)
@@ -31,9 +32,18 @@ load("data/data.rda")
 # load("data/mymap.rda")
 
 
+
 # DEFINE SERVER LOGIC #
 #---------------------------------------------------------------------------
 server <- function (input, output, session) {
+  
+  # toggle sidebar
+  observeEvent(input$toggleSidebar, {
+    toggleCssClass("main", "col-sm-9")
+    # toggle(selector = "div.col-sm-3", anim = FALSE)
+    # toggleCssClass("main", "col-sm-12")
+    js$toggleSidebar()
+  })
 
 
   # data output-------------------------------------------------------------
@@ -246,7 +256,8 @@ server <- function (input, output, session) {
       tags$h1(value),
       tags$p(
         span(icon("exclamation-triangle"), style="color:red;"),
-        paste0("Offenses in ", input$range[2])
+        paste0("Offenses in ", input$range[2]),
+        style="font-size:1.1em;"
       )
     )
   })
@@ -279,7 +290,8 @@ server <- function (input, output, session) {
       tags$h1(round(value, 2)),
       tags$p(
         span(icon("bar-chart"), style="color:yellow;"),
-        paste0("Crime rate in ", input$range[2], " (per 100K)")
+        paste0("Crime rate in ", input$range[2], " (per 100K)"),
+        style="font-size:1.1em;"
       )
     )
   })
@@ -317,7 +329,8 @@ server <- function (input, output, session) {
       tags$h1(value),
       tags$p(
         span(icon("percent"), style="color:#337ab7;"),
-        paste0("Change, ", input$range[2] - 1, "-", substr(input$range[2], 3, 4))
+        paste0("Change, ", input$range[2] - 1, "-", substr(input$range[2], 3, 4)),
+        style="font-size:1.1em;"
       )
     )
   })
@@ -355,7 +368,8 @@ server <- function (input, output, session) {
       tags$h1(value),
       tags$p(
         span(icon("percent"), style="color:#337ab7;"),
-        paste0("Change, ", input$range[1], "-", substr(input$range[2], 3, 4))
+        paste0("Change, ", input$range[1], "-", substr(input$range[2], 3, 4)),
+        style="font-size:1.1em;"
       )
     )
   })
@@ -478,6 +492,7 @@ server <- function (input, output, session) {
   
   output$map <- renderLeaflet({
     
+    map_selected <- mymap
     data_output <- data_output %>%
       filter(year == input$range[2])
 
@@ -490,13 +505,11 @@ server <- function (input, output, session) {
     } else {
       my_attr <- data_output %>%
         group_by(name = county) %>%
-        summarise(data = sum(violent, property, na.rm = TRUE))
+        summarise(data = sum(violent, property))
     }
       
-    map_selected <- mymap
     map_selected@data <- map_selected@data %>%
       left_join(my_attr)
-    
     map_selected2 <- map_selected
 
     if (input$region != "All") {
