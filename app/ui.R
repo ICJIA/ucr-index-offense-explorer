@@ -48,14 +48,23 @@ ui <- shinyUI(fluidPage(
   
   # TITLE
   titlePanel(
-    tags$div(
-      a(
-        img(id = "logo", src = "logo-icjia-small-blue-3.png"),
-        href = "http://www.icjia.state.il.us/",
-        target = "_blank",
-        style = "text-decoration:none;"
+    fluidRow(
+      id = "title",
+      column(
+        10,
+        style="display:flex; align-items: center;",
+        actionButton("toggleSidebar", icon("bars")),
+        span(id = "text-identity", "Uniform Crime Report Data Dashboard")
       ),
-      span(id = "text-identity", "Uniform Crime Report Data Dashboard")
+      column(
+        2,
+        a(
+          img(id = "logo", src = "logo-icjia-small-blue-3.png"),
+          href = "http://www.icjia.state.il.us/",
+          target = "_blank",
+          style = "text-decoration:none; float:right;"
+        )
+      )
     )
   ),
   
@@ -66,8 +75,6 @@ ui <- shinyUI(fluidPage(
     sidebarPanel(
       id ="sidebar",
       width = 3,
-      actionButton("reset", "Reset"),
-      hr(),
       radioButtons(
         "crimeCat",
         "Select crime category",
@@ -100,8 +107,10 @@ ui <- shinyUI(fluidPage(
         choices = c("All", sort(unique(as.character(mydata$county)))),
         selected = "All"
       ),
-      hr(),
-      downloadButton("downloadData","Download")
+      p(
+        downloadButton("downloadData","Download"), style="text-align:center;",
+        actionButton("reset", "Reset"), style="text-align:center;"
+      )
     ),
     
     # MAIN
@@ -110,10 +119,10 @@ ui <- shinyUI(fluidPage(
       id = "main",
       width = 9,
       fluidRow(
+        style = "margin: 0 auto;",
         column(
           12,
-          actionButton("toggleSidebar", icon("bars"), style="font-size:1.5em;"),
-          h1(textOutput("current"), id="title", style="display:inline-block;"),
+          h1(textOutput("current"), style="margin:0 0 10px 0; display:inline-block;"),
           p("This dashboard offers an interactive way to explore the latest",
             em("Crime in Illinois Annual Uniform Crime Report"),
             "data (2001-2015). All data sets used here are freely available at",
@@ -154,45 +163,100 @@ ui <- shinyUI(fluidPage(
   tags$div(
     class="footer",
     fluidRow(
-      column(12, style = "font-size: 10px; margin-top:10px; text-align:center;",
-             a(
-               icon("facebook-square", "fa-3x"),
-               href = "http://www.facebook.com/ICJIA",
-               target = "_blank",
-               id = "social"
-             ),
-             a(
-               icon("twitter-square", "fa-3x"),
-               href = "http://www.twitter.com/ICJIA_Illinois",
-               target = "_blank",
-               id = "social"
-             ),
-             a(
-               icon("youtube-square", "fa-3x"),
-               href = "https://www.youtube.com/channel/UCtZMzk8D3P4OixYTwsfPeKA",
-               target = "_blank",
-               id = "social"
-             )
+      column(
+        12,
+        style = "font-size: 10px; margin-top:10px; text-align:center; align-items: center",
+        h3(
+          "Sign up for the cj dispatch",
+          style = "text-transform:uppercase; font-size:17px; font-style:normal;"
+        ),
+        a(
+          "Subscribe Now",
+          href="http://visitor.r20.constantcontact.com/manage/optin?v=001MqUcqqvjwLCJXlLMSWbTe3zHHmEQgFeBuHvBcJWTbwgrxFbDSGx4HSUPpI6DJWMUPgbljtLxffqIcGFTgCnr-auak88ybvRxpoJlTMGPtZs%3D",
+          class="btn btn-default",
+          style="font-family:'Gentium Book Basic'; font-size:16px;"
+        ),
+        div(
+          style = "margin-top: 15px;",
+          a(
+             icon("facebook-square", "fa-3x"),
+             href = "http://www.facebook.com/ICJIA",
+             target = "_blank",
+             id = "social"
+           ),
+           a(
+             icon("twitter-square", "fa-3x"),
+             href = "http://www.twitter.com/ICJIA_Illinois",
+             target = "_blank",
+             id = "social"
+           ),
+           a(
+             icon("youtube-square", "fa-3x"),
+             href = "https://www.youtube.com/channel/UCtZMzk8D3P4OixYTwsfPeKA",
+             target = "_blank",
+             id = "social"
+           ),
+          a(
+            icon("soundcloud", "fa-3x"),
+            href = "https://www.soundcloud.com/icjia",
+            target = "_blank",
+            id = "social"
+          ),
+          a(
+            icon("github", "fa-3x"),
+            href = "https://github.com/ICJIA",
+            target = "_blank",
+            id = "social"
+          ),
+          a(
+            icon("rss-square", "fa-3x"),
+            href = "https://www.icjia.state.il.us/feed",
+            target = "_blank",
+            id = "social"
+          ),
+          a(
+            icon("envelope", "fa-3x"),
+            href = "https://www.icjia.state.il.us/about/contact",
+            target = "_blank",
+            id = "social"
+          )
+        )
       ),
-      column(12, style = "font-size: 12px; margin-top:10px; text-align:center;",
-             p("(312) 793-8550 - Fax: (312) 793-8422-",
-               a(
-                 "cja.irc@illinois.gov",
-                 href = "mailto:cja.irc@illinois.gov",
-                 target = "_blank",
-                 id = "social"
-               )
-             )
+      column(
+        12,
+        style = "font-size: 11px; margin-top:15px; text-align:center;",
+        p("(312) 793-8550 - Fax: (312) 793-8422 - ",
+           a(
+             "cja.irc@illinois.gov",
+             href = "mailto:cja.irc@illinois.gov",
+             target = "_blank",
+             id = "social",
+             style = "margin:0;"
+           )
+         )
       ),
-      column(12, style = "font-size: 13px; text-align:center;",
-             p(HTML("&copy;"), "2018",
-               a(
-                 "Illinois Criminal Justice Information Authority",
-                 href = "http://www.icjia.state.il.us/",
-                 target = "_blank",
-                 id = "social"
-               )
-             )
+      column(
+        12,
+        style = "font-size: 13px; text-align:center;",
+        p(
+          HTML("&copy;"),
+          "2018",
+           a(
+             "Illinois Criminal Justice Information Authority",
+             href = "http://www.icjia.state.il.us/",
+             target = "_blank",
+             id = "social",
+             style = "margin:0;"
+           ),
+          "  | ",
+          a(
+            "Privacy",
+            href = "http://www.icjia.state.il.us/about/privacy",
+            target = "_blank",
+            id = "social",
+            style = "margin:0;"
+          )
+        )
       )
     )
   )

@@ -1,14 +1,12 @@
-@import url("//fonts.googleapis.com/css?family=Fjalla One|Cabin:400");
+@import url("//fonts.googleapis.com/css?family=Oswald|Cabin:400");
 @import url("//fonts.googleapis.com/css?family=Gentium Book Basic|Cabin:400");
 @import url("//fonts.googleapis.com/css?family=Lato|Cabin:400");
 
 :root {
-    --color-social: #466c8c;
-    --color-button: #337ab7;
-    --color-kpi: #f28869;
-    --color-white: #fff;
-    --color-grey: #ddd;
-    --color-footer: #1f3641;
+  --color-button: #337ab7;
+  --color-footer: #1f3641;
+  --color-kpi: #f28869;
+  --color-social: #466c8c;
 }
 
 
@@ -27,11 +25,7 @@ body {
 h1,
 h2,
 h3 {
-  font-family: 'Fjalla One';
-}
-
-h1#title {
-  margin-top: 0;
+  font-family: 'Oswald', sans-serif;
 }
 
 h4 {
@@ -43,31 +37,39 @@ ul {
 }
 
 
-#logo {
-  height: 60px;
+#title {
+  display: flex;
+  align-items: center;
+  margin: 0 0 30px 0;
+  padding: 10px 0 30px 0;
+  border-bottom: 1px solid #466c8c;
 }
 
+#logo {
+  height: 45px;
+}
 
 #text-identity {
   font-weight: 700;
-  font-size: 16px;
+  font-size: 14px;
   font-family: 'Lato';
+  margin: auto 5px;
   text-transform: uppercase;
-  display: none;
+  display: inline-block;
 }
 
 button#toggleSidebar {
-  background-color: var(--color-white);
+  margin: 0;
   border: none;
-  /*border-color: var(--color-button);*/
+  color: #337ab7;
   color: var(--color-button);
-  margin: 0 0 15px 0;
+  background-color: white;
 }
 
 button#toggleSidebar:hover {
-  background-color: var(--color-grey);
-  /*border-color: var(--color-button);*/
+  color: #1f3641;
   color: var(--color-footer);
+  background-color: lightgrey;
 }
 
 #data-table {
@@ -75,13 +77,14 @@ button#toggleSidebar:hover {
 }
 
 #social {
-  margin:5px;
-  color: var(--color-social);
+  margin: 5px;
   text-decoration: none;
+  color: #466c8c;
+  color: var(--color-social);
 }
 
 #social:hover {
-  color: var(--color-white);
+  color: #aaa;
 }
 
 
@@ -117,23 +120,26 @@ button#toggleSidebar:hover {
 
 .kpi {
   width: 100%;
-  border: 1px solid var(--color-grey);
+  border: 1px solid lightgrey;
   border-radius: 5px;
+  color: white;
   background: var(--color-kpi);
-  color: var(--color-white);
   text-align: center;
 }
 
 .highcharts-container,
 .leaflet-container {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-grey);
+  background-color: white;
+  border: 1px solid lightgrey;
   border-radius: 5px;
 }
 
 .btn, .btn-default {
+  margin: 5px 5px;
+  color: white;
+  border-color: #2e6da4;
+  background-color: #337ab7;
   background-color: var(--color-button);
-  color: var(--color-white);
 }
 
 .btn:hover,
@@ -141,29 +147,32 @@ button#toggleSidebar:hover {
 .btn-default:focus, 
 .btn-default:active:focus, 
 .btn-default:active:hover {
-  background-color: var(--color-social);
-  color: var(--color-grey);
+  outline:0;
+  color: lightgrey;
+  border-color: #204d74;
+  background-color: #286090;
 }
 
 .tab-name {
   font-size: 14px;
-  font-family: 'Lato';
+  font-family: 'Lato', sans-serif;
   text-transform: uppercase;
 }
 
 .footer {
   flex-shrink: 0;
-  background-color: var(--color-footer);
   color: white;
+  padding: 30px;
   font-family: 'Lato';
   text-align: center;
-  padding: 30px;
+  background-color: #1f3641;
+  background-color: var(--color-footer);
 }
 
 
 @media (min-width: 768px) {
   #text-identity {
-    display: inline-block;
+    font-size: 16px;
   }
   
   #data-table {
