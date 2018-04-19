@@ -553,10 +553,9 @@ server <- function (input, output, session) {
         highlightOptions = highlightOptions(
           weight = 4,
           color = "black",
-          bringToFront = TRUE
+          bringToFront = FALSE
         )
       )
-      # addMarkers(label = ~as.character(name))
   })
 
   # data table--------------------------------------------------------------
