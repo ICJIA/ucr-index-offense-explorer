@@ -38,8 +38,6 @@ server <- function (input, output, session) {
   observeEvent(input$toggleSidebar, {
     toggleCssClass("main", "col-sm-9")
     js$toggleSidebar()
-    # toggle(selector = "div.col-sm-3", anim = FALSE)
-    # toggleCssClass("main", "col-sm-12")
   })
 
 
@@ -252,7 +250,7 @@ server <- function (input, output, session) {
     tagList(
       tags$h1(value),
       tags$p(
-        span(icon("exclamation-triangle"), style="color:red;"),
+        span(icon("bar-chart"), style="color:yellow;"),
         paste0("Offenses in ", input$range[2]),
         style="font-size:1.1em;"
       )
@@ -511,20 +509,20 @@ server <- function (input, output, session) {
 
     if (input$region != "All") {
       if (input$region == "Cook") {
-        map_selected2 <- map_selected[map_selected$name == "Cook", ]
+        map_selected2 <- map_selected2[map_selected2$name == "Cook", ]
       } else {
-        map_selected2 <- map_selected[map_selected$region == input$region, ]
+        map_selected2 <- map_selected2[map_selected2$region == input$region, ]
       }
     }
     if (input$type != "All") {
       if (input$type == "Cook") {
-        map_selected2 <- map_selected[map_selected$name == "Cook", ]
+        map_selected2 <- map_selected2[map_selected2$name == "Cook", ]
       } else {
-        map_selected2 <- map_selected[map_selected$type == input$type, ]
+        map_selected2 <- map_selected2[map_selected2$type == input$type, ]
       }
     }
     if (input$county != "All") {
-      map_selected2 <- map_selected[map_selected$name == input$county, ]
+      map_selected2 <- map_selected2[map_selected2$name == input$county, ]
     }
     
     fill_color <- colorQuantile("YlOrRd", map_selected$data)
@@ -534,27 +532,29 @@ server <- function (input, output, session) {
       setView(lng = -89.3, lat = 39.8, zoom = 6) %>%
       addPolygons(
         data = mymap,
-        weight = 0.6,
-        color = "black",
+        weight = 1.5,
+        color = "darkgrey",
         fillOpacity = 0.2,
         fillColor = "lightgrey"
       ) %>%
       addPolygons(
         data = map_selected2,
-        weight = 0.6,
-        color = "black",
+        weight = 1.5,
+        color = "darkgrey",
         fillOpacity = 0.8,
         fillColor = ~fill_color(data),
         label = ~paste0(as.character(name), ": ", round(data, 2)),
         labelOptions = labelOptions(
-          offset = c(0, -40),
+          offset = c(0, -45),
           direction = "top",
           textsize = "12px",
-          style = list(
-            "background" = "white"
-            )
+          style = list("background" = "white")
         ),
-        highlightOptions = highlightOptions(weight = 3, bringToFront = TRUE)
+        highlightOptions = highlightOptions(
+          weight = 4,
+          color = "black",
+          bringToFront = TRUE
+        )
       )
       # addMarkers(label = ~as.character(name))
   })
