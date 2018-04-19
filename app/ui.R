@@ -48,21 +48,24 @@ ui <- shinyUI(fluidPage(
   
   # TITLE
   titlePanel(
-    fluidRow(
-      id = "title",
-      column(
-        10,
-        style="display:flex; align-items: center;",
-        actionButton("toggleSidebar", icon("bars")),
-        span(id = "text-identity", "Uniform Crime Report Data Dashboard")
-      ),
-      column(
-        2,
-        a(
-          img(id = "logo", src = "logo-icjia-small-blue-3.png"),
-          href = "http://www.icjia.state.il.us/",
-          target = "_blank",
-          style = "text-decoration:none; float:right;"
+    div(
+      class="container-title",    
+      fluidRow(
+        id = "title",
+        column(
+          10,
+          style="display:flex; align-items: center;",
+          actionButton("toggleSidebar", icon("bars")),
+          span(id = "text-identity", "Uniform Crime Report Data Dashboard")
+        ),
+        column(
+          2,
+          a(
+            img(id = "logo", src = "logo-icjia-small-blue-3.png"),
+            href = "http://www.icjia.state.il.us/",
+            target = "_blank",
+            style = "text-decoration:none; float:right;"
+          )
         )
       )
     )
