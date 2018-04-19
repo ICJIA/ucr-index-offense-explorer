@@ -2,12 +2,14 @@
 @import url("//fonts.googleapis.com/css?family=Gentium Book Basic|Cabin:400");
 @import url("//fonts.googleapis.com/css?family=Lato|Cabin:400");
 
+/*
 :root {
   --color-button: #337ab7;
   --color-footer: #1f3641;
   --color-kpi: #f28869;
   --color-social: #466c8c;
 }
+*/
 
 
 html, body {
@@ -65,13 +67,11 @@ button#toggleSidebar {
   margin: 0;
   border: none;
   color: #337ab7;
-  color: var(--color-button);
   background-color: white;
 }
 
 button#toggleSidebar:hover {
   color: #1f3641;
-  color: var(--color-footer);
   background-color: lightgrey;
 }
 
@@ -83,7 +83,6 @@ button#toggleSidebar:hover {
   margin: 5px;
   text-decoration: none;
   color: #466c8c;
-  color: var(--color-social);
 }
 
 #social:hover {
@@ -127,7 +126,7 @@ button#toggleSidebar:hover {
   border: 1px solid lightgrey;
   border-radius: 5px;
   color: white;
-  background: var(--color-kpi);
+  background: #f28869;
   text-align: center;
 }
 
@@ -143,7 +142,6 @@ button#toggleSidebar:hover {
   color: white;
   border-color: #2e6da4;
   background-color: #337ab7;
-  background-color: var(--color-button);
 }
 
 .btn:hover,
@@ -170,7 +168,6 @@ button#toggleSidebar:hover {
   font-family: 'Lato';
   text-align: center;
   background-color: #1f3641;
-  background-color: var(--color-footer);
 }
 
 
