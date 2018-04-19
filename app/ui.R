@@ -1,15 +1,11 @@
 # Author: Bobae Kang (Bobae.Kang@illinois.gov)
 # Created: 2017-10-31
-# Last revised: 2018-04-05
+# Last revised: 2018-04-17
 # Script title: ui.R
 #---------------------------------------------------------------------------
 # Script description:
 # The current script is to define UI for the Shiny application for ISP data.
 # (develop) v2.0: Without shinydashboard
-#---------------------------------------------------------------------------
-# Table of contents:
-# * PREPARE FOR THE SESSION
-# * DEFINE UI
 #---------------------------------------------------------------------------
 
 
@@ -19,6 +15,7 @@ options(shiny.sanitize.errors = FALSE)
 
 # import packages
 library(shiny)
+library(shinyjs)
 library(shinycssloaders)
 library(DT)
 library(leaflet)
@@ -27,7 +24,11 @@ library(dplyr)
 
 
 # import data
-load("data/mydata.rda")
+load("data/data.rda")
+
+
+# custom js code
+jscode <- "shinyjs.toggleSidebar = function() { $('div.col-sm-3').has('form').toggle(); $(window).resize(); }"
 
 
 # DEFINE UI #
@@ -40,15 +41,33 @@ ui <- shinyUI(fluidPage(
     tags$title("Uniform Crime Report Data Dashboard")
   ),
   
-  # # SHINYJS
-  # useShinyjs(),
-  # extendShinyjs(text = jscode, functions = "reload"),
+  # SHINYJS
+  useShinyjs(),
+  # extendShinyjs(text = jscode),
+  extendShinyjs(text = jscode, functions = "toggleSidebar"), # for shinyappsio
   
   # TITLE
   titlePanel(
-    tags$div(
-      img(id="logo", src="logo-icjia-small-blue-3.png"),
-      span(id="text-identity", "Uniform Crime Report Data Dashboard")
+    div(
+      class="container-title",    
+      fluidRow(
+        id = "title",
+        column(
+          10,
+          style="display:flex; align-items: center;",
+          actionButton("toggleSidebar", icon("bars")),
+          span(id = "text-identity", "Uniform Crime Report Data Dashboard")
+        ),
+        column(
+          2,
+          a(
+            img(id = "logo", src = "logo-icjia-small-blue-3.png"),
+            href = "http://www.icjia.state.il.us/",
+            target = "_blank",
+            style = "text-decoration:none; float:right;"
+          )
+        )
+      )
     )
   ),
   
@@ -57,14 +76,21 @@ ui <- shinyUI(fluidPage(
     # SIDEBAR
     #---------------------------------------------------------------------------
     sidebarPanel(
-      width = 2,
-      actionButton("reset", "Reset"),
-      hr(),
+      id ="sidebar",
+      width = 3,
       radioButtons(
         "crimeCat",
         "Select crime category",
         choices = c("All", "Property", "Violent"),
         selected = "All"
+      ),
+      sliderInput(
+        "range",
+        "Select years",
+        min = min(as.integer(mydata$year)),
+        max = max(as.integer(mydata$year)),
+        value = c(min(as.integer(mydata$year)), max(as.integer(mydata$year))),
+        step = 1
       ),
       selectInput(
         "region",
@@ -73,9 +99,9 @@ ui <- shinyUI(fluidPage(
         selected = "All"
       ),
       selectInput(
-        "countyType",
+        "type",
         "Select county type",
-        choices = c("All", sort(unique(as.character(mydata$countyType)))),
+        choices = c("All", sort(unique(as.character(mydata$type)))),
         selected = "All"
       ),
       selectInput(
@@ -84,23 +110,34 @@ ui <- shinyUI(fluidPage(
         choices = c("All", sort(unique(as.character(mydata$county)))),
         selected = "All"
       ),
-      hr(),
-      downloadButton("downloadData","Download")
+      p(
+        downloadButton("downloadData","Download"), style="text-align:center;",
+        actionButton("reset", "Reset"), style="text-align:center;"
+      )
     ),
     
     # MAIN
     #---------------------------------------------------------------------------
     mainPanel(
-      width = 10,
+      id = "main",
+      width = 9,
       fluidRow(
+        style = "margin: 0 auto;",
         column(
           12,
-          h1(textOutput("current"), id="title"),
-          p("This dashboard offers an interactive way to explore the latest",
+          h1(textOutput("current"), style="margin:0 0 10px 0; display:inline-block;"),
+          p("This dashboard offers an interactive way to explore the",
             em("Crime in Illinois Annual Uniform Crime Report"),
-            "data (2011-2015). All data sets used here are freely available at",
-            a("Illinois State Police website.", href="http://www.isp.state.il.us/crime/ucrhome.cfm"),
-            "You can also download the filtered data for this dashboard by clicking the \"Download\" button on the sidebar menu."
+            "data (1982-2015), originally provided by Illinois State Police and",
+            "prepared by ICJIA.",
+            "All data sets used here are freely available at",
+            a("the ICJIA website.", href="http://www.icjia.state.il.us/research/overview#tab_research-data", target="_blank")
+          ),
+          p(
+            "Use the filters on the side menu to explore the patterns in criminal offenses.",
+            "You can toggle the side menu using the icon on the top left.",
+            "You can also download the filtered data by clicking",
+            "the \"Download\" button on the side menu."
           )
         )
       ),
@@ -116,15 +153,17 @@ ui <- shinyUI(fluidPage(
       ),
       
       fluidRow(
-        column(5, h3(textOutput("lineChart_title")), withSpinner(highchartOutput("lineChart"), type = 4)),
-        column(4, h3(textOutput("pieChart_title")), withSpinner(highchartOutput("pieChart"), type = 4)),
-        column(3, h3("Selected Area"), withSpinner(leafletOutput("map"), type = 4))
+        column(4, h3(textOutput("line_title")), withSpinner(highchartOutput("line"), type = 4)),
+        column(4, h3(textOutput("pie_title")), withSpinner(highchartOutput("pie"), type = 4)),
+        column(4, h3(textOutput("map_title")), withSpinner(leafletOutput("map"), type = 4))
       ),
       
       fluidRow(
-        column(12, style = "padding:20px;",
-               h3("Data Table"),
-               withSpinner(dataTableOutput("dataTable"), type = 4))
+        id="data-table",
+        column(
+          12, style = "padding:20px;",
+          h3("Data Table"),
+          withSpinner(dataTableOutput("dataTable"), type = 4))
       )
     )
   ),
@@ -134,32 +173,100 @@ ui <- shinyUI(fluidPage(
   tags$div(
     class="footer",
     fluidRow(
-      column(12, style = "font-size: 10px; margin-top:10px; text-align:center;",
-             a(icon("facebook-square", "fa-3x"),
-               href = "http://www.facebook.com/ICJIA",
-               id = "social"),
-             "    ",
-             a(icon("twitter-square", "fa-3x"),
-               href = "http://www.twitter.com/ICJIA_Illinois",
-               id = "social"),
-             "    ",
-             a(icon("youtube-square", "fa-3x"),
-               href = "https://www.youtube.com/channel/UCtZMzk8D3P4OixYTwsfPeKA",
-               id = "social")
+      column(
+        12,
+        style = "font-size: 10px; margin-top:10px; text-align:center; align-items: center",
+        h3(
+          "Sign up for the cj dispatch",
+          style = "text-transform:uppercase; font-size:17px; font-style:normal;"
+        ),
+        a(
+          "Subscribe Now",
+          href="http://visitor.r20.constantcontact.com/manage/optin?v=001MqUcqqvjwLCJXlLMSWbTe3zHHmEQgFeBuHvBcJWTbwgrxFbDSGx4HSUPpI6DJWMUPgbljtLxffqIcGFTgCnr-auak88ybvRxpoJlTMGPtZs%3D",
+          class="btn btn-default",
+          style="font-family:'Gentium Book Basic'; font-size:16px;"
+        ),
+        div(
+          style = "margin-top: 15px;",
+          a(
+             icon("facebook-square", "fa-3x"),
+             href = "http://www.facebook.com/ICJIA",
+             target = "_blank",
+             id = "social"
+           ),
+           a(
+             icon("twitter-square", "fa-3x"),
+             href = "http://www.twitter.com/ICJIA_Illinois",
+             target = "_blank",
+             id = "social"
+           ),
+           a(
+             icon("youtube-square", "fa-3x"),
+             href = "https://www.youtube.com/channel/UCtZMzk8D3P4OixYTwsfPeKA",
+             target = "_blank",
+             id = "social"
+           ),
+          a(
+            icon("soundcloud", "fa-3x"),
+            href = "https://www.soundcloud.com/icjia",
+            target = "_blank",
+            id = "social"
+          ),
+          a(
+            icon("github", "fa-3x"),
+            href = "https://github.com/ICJIA",
+            target = "_blank",
+            id = "social"
+          ),
+          a(
+            icon("rss-square", "fa-3x"),
+            href = "https://www.icjia.state.il.us/feed",
+            target = "_blank",
+            id = "social"
+          ),
+          a(
+            icon("envelope", "fa-3x"),
+            href = "https://www.icjia.state.il.us/about/contact",
+            target = "_blank",
+            id = "social"
+          )
+        )
       ),
-      column(12, style = "font-size: 12px; margin-top:10px; text-align:center;",
-             p("(312) 793-8550 - Fax: (312) 793-8422-",
-               a("cja.irc@illinois.gov",
-                 href = "mailto:cja.irc@illinois.gov",
-                 id = "social")
-             )
+      column(
+        12,
+        style = "font-size: 11px; margin-top:15px; text-align:center;",
+        p("(312) 793-8550 - Fax: (312) 793-8422 - ",
+           a(
+             "cja.irc@illinois.gov",
+             href = "mailto:cja.irc@illinois.gov",
+             target = "_blank",
+             id = "social",
+             style = "margin:0;"
+           )
+         )
       ),
-      column(12, style = "font-size: 13px; text-align:center;",
-             p(HTML("&copy;"), "2018",
-               a("Illinois Criminal Justice Information Authority",
-                 href = "http://www.icjia.state.il.us/",
-                 id = "social")
-             )
+      column(
+        12,
+        style = "font-size: 13px; text-align:center;",
+        p(
+          HTML("&copy;"),
+          "2018",
+           a(
+             "Illinois Criminal Justice Information Authority",
+             href = "http://www.icjia.state.il.us/",
+             target = "_blank",
+             id = "social",
+             style = "margin:0;"
+           ),
+          "  | ",
+          a(
+            "Privacy",
+            href = "http://www.icjia.state.il.us/about/privacy",
+            target = "_blank",
+            id = "social",
+            style = "margin:0;"
+          )
+        )
       )
     )
   )

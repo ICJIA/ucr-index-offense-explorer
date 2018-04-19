@@ -1,14 +1,12 @@
-@import url("//fonts.googleapis.com/css?family=Fjalla One|Cabin:400");
+@import url("//fonts.googleapis.com/css?family=Oswald|Cabin:400");
 @import url("//fonts.googleapis.com/css?family=Gentium Book Basic|Cabin:400");
 @import url("//fonts.googleapis.com/css?family=Lato|Cabin:400");
 
 :root {
-    --color-social: #466c8c;
-    --color-button: #337ab7;
-    --color-kpi: #f28869;
-    --color-white: #fff;
-    --color-grey: #ddd;
-    --color-footer: #1f3641;
+  --color-button: #337ab7;
+  --color-footer: #1f3641;
+  --color-kpi: #f28869;
+  --color-social: #466c8c;
 }
 
 
@@ -25,13 +23,12 @@ body {
 }
 
 h1,
-h2,
 h3 {
-  font-family: 'Fjalla One';
+  font-family: 'Oswald', sans-serif;
 }
 
-h1#title {
-  margin-top: 0;
+h2 {
+  margin: 0;
 }
 
 h4 {
@@ -43,26 +40,62 @@ ul {
 }
 
 
+#title {
+  display: flex;
+  align-items: center;
+  max-width: 1280px;
+  margin: auto;
+  padding: 10px 0 30px 0;
+}
+
 #logo {
-  height: 60px;
+  height: 45px;
 }
 
 #text-identity {
   font-weight: 700;
-  font-size: 16px;
+  font-size: 14px;
   font-family: 'Lato';
+  margin: auto 5px;
   text-transform: uppercase;
+  display: inline-block;
+}
+
+button#toggleSidebar {
+  margin: 0;
+  border: none;
+  color: #337ab7;
+  color: var(--color-button);
+  background-color: white;
+}
+
+button#toggleSidebar:hover {
+  color: #1f3641;
+  color: var(--color-footer);
+  background-color: lightgrey;
+}
+
+#data-table {
+  display: none;
 }
 
 #social {
-  margin:5px;
+  margin: 5px;
+  text-decoration: none;
+  color: #466c8c;
   color: var(--color-social);
 }
 
 #social:hover {
-  color: var(--color-white);
+  color: #aaa;
 }
 
+
+.container-title {
+  display: flex;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #466c8c;
+}
 
 .container-fluid {
   display: flex;
@@ -72,11 +105,6 @@ ul {
   margin: 0;
 }
 
-.container-fluid > h2 {
-  margin: auto;
-  width: 100%;
-  max-width: 1280px;
-}
 
 .row {
   flex: 1 0 auto;
@@ -91,28 +119,31 @@ ul {
 
 .kpis {
   display: flex;
+  flex-direction: column;
 }
 
 .kpi {
-  width: 23%;
-  margin: 0 auto;
-  padding: 0 15px;
-  border: 1px solid var(--color-grey);
+  width: 100%;
+  border: 1px solid lightgrey;
   border-radius: 5px;
+  color: white;
   background: var(--color-kpi);
-  color: var(--color-white);
+  text-align: center;
 }
 
 .highcharts-container,
 .leaflet-container {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-grey);
+  background-color: white;
+  border: 1px solid lightgrey;
   border-radius: 5px;
 }
 
 .btn, .btn-default {
+  margin: 5px 5px;
+  color: white;
+  border-color: #2e6da4;
+  background-color: #337ab7;
   background-color: var(--color-button);
-  color: var(--color-grey);
 }
 
 .btn:hover,
@@ -120,108 +151,45 @@ ul {
 .btn-default:focus, 
 .btn-default:active:focus, 
 .btn-default:active:hover {
-  background-color: var(--color-social);
-  color: var(--color-grey);
+  outline:0;
+  color: lightgrey;
+  border-color: #204d74;
+  background-color: #286090;
 }
 
 .tab-name {
   font-size: 14px;
-  font-family: 'Lato';
+  font-family: 'Lato', sans-serif;
   text-transform: uppercase;
 }
 
 .footer {
   flex-shrink: 0;
-  background-color: var(--color-footer);
   color: white;
+  padding: 30px;
   font-family: 'Lato';
   text-align: center;
-  padding: 30px;
-}
-
-/*
-global
-h1 {
-  font-family:"Fjalla One";
-}
-
-h3 {
-  font-family:"Fjalla One";
-}
-
-p {
-  font-family:"Georgia";
-}
-
-#downloadData {
-  color: #000;
-}
-
-#social {
-  margin:5px;
-  color:#466c8c;
-}
-
-#social:hover{
-  color:#fff;
-}
-
-main-header
-.skin-blue .main-header .logo {
-  font-family:"Georgia";
-  background-color: #466c8c;
-}
-                            
-.skin-blue .main-header .logo:hover {
-  background-color: #466c8c;
-}
-                              
-.skin-blue .main-header .navbar {
-  background-color: #466c8c;
-}
-
-.skin-blue .main-header .navbar .sidebar-toggle:hover{
-  background-color: #e68a00;
-}
-
-
-main sidebar
-.skin-blue .main-sidebar {
   background-color: #1f3641;
-}
-        
-.skin-blue .main-sidebar .sidebar .sidebar-menu .active a{
-  background-color: #000;
-}
-        
-.skin-blue .main-sidebar .sidebar .sidebar-menu a{
-  background-color: #0f0;
-  color: #000000;
-}
-        
-.skin-blue .main-sidebar .sidebar .sidebar-menu a:hover{
-  background-color: #ff69b4;
+  background-color: var(--color-footer);
 }
 
 
-content wrapper
-.skin-blue .content-wrapper {
-  background-color: #fff;
+@media (min-width: 768px) {
+  #text-identity {
+    font-size: 16px;
+  }
+  
+  #data-table {
+    display: block;
+  }
+  
+  .kpis {
+    flex-direction: row;
+  }
+  
+  .kpi {
+    width: 24%;
+    padding: 0 15px;
+    margin: 0 auto;
+  }
 }
-
-.skin-blue .content-wrapper .shiny-html-output p{
-  font-size: 16px;
-}
-
-.skin-blue .content-wrapper .highcharts-container {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.skin-blue .content-wrapper .leaflet-container {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-*/
