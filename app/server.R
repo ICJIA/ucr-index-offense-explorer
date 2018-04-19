@@ -506,7 +506,7 @@ server <- function (input, output, session) {
     }
       
     map_selected@data <- map_selected@data %>%
-      left_join(my_attr)
+      left_join(my_attr, by = "name")
     map_selected2 <- map_selected
 
     if (input$region != "All") {

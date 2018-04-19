@@ -126,11 +126,18 @@ ui <- shinyUI(fluidPage(
         column(
           12,
           h1(textOutput("current"), style="margin:0 0 10px 0; display:inline-block;"),
-          p("This dashboard offers an interactive way to explore the latest",
+          p("This dashboard offers an interactive way to explore the",
             em("Crime in Illinois Annual Uniform Crime Report"),
-            "data (2001-2015). All data sets used here are freely available at",
-            a("Illinois State Police website.", href="http://www.isp.state.il.us/crime/ucrhome.cfm", target="_blank"),
-            "You can also download the filtered data for this dashboard by clicking the \"Download\" button on the sidebar menu."
+            "data (1982-2015), originally provided by Illinois State Police and",
+            "prepared by ICJIA.",
+            "All data sets used here are freely available at",
+            a("the ICJIA website.", href="http://www.icjia.state.il.us/research/overview#tab_research-data", target="_blank")
+          ),
+          p(
+            "Use the filters on the side menu to explore the patterns in criminal offenses.",
+            "You can toggle the side menu using the icon on the top left.",
+            "You can also download the filtered data by clicking",
+            "the \"Download\" button on the side menu."
           )
         )
       ),
