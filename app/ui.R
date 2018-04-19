@@ -1,6 +1,6 @@
 # Author: Bobae Kang (Bobae.Kang@illinois.gov)
 # Created: 2017-10-31
-# Last revised: 2018-04-17
+# Last revised: 2018-04-19
 # Script title: ui.R
 #---------------------------------------------------------------------------
 # Script description:
