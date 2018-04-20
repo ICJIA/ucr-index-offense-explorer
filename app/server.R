@@ -60,7 +60,7 @@ server <- function (input, output, session) {
   observeEvent(input$reset,{
     updateRadioButtons(
       session,
-      inputId  = "crimeCat",
+      inputId  = "category",
       selected = "All"
     )
 
@@ -79,8 +79,8 @@ server <- function (input, output, session) {
     
     updateSelectInput(
       session,
-      inputId  = "type",
-      choices  = c("All", sort(unique(as.character(data_output$type)))),
+      inputId  = "circuit",
+      choices  = c("All", sort(unique(as.character(data_output$circuit)))),
       selected = "All"
     )
     
@@ -94,78 +94,20 @@ server <- function (input, output, session) {
   
   
   # filtering data--------------------------------------------------------------
-  observeEvent(input$region, {
-    if (input$region == "All") {
-      updateSelectInput(
-        session,
-        inputId  = "region",
-        choices  = c("All", sort(unique(as.character(data_output$region)))),
-        selected = "All"
-      )
-      
-      updateSelectInput(
-        session,
-        inputId  = "type",
-        choices  = c("All", sort(unique(as.character(data_output$type)))),
-        selected = "All"
-       )
-      
-      updateSelectInput(
-        session,
-        inputId  = "county",
-        choices  = c("All", sort(unique(as.character(data_output$county)))),
-        selected = "All"
-      )
-    } else {
-      data_update <- mydata %>%
+  observeEvent(c(input$region, input$circuit), {
+    if (input$region != "All") {
+      data_use <- data_output %>%
         filter(region == input$region)
-      
-      updateSelectInput(
-        session,
-        inputId = "type",
-        label   = "Select county type",
-        choices = c("All", sort(unique(as.character(data_update$type))))
-      )
-      
-      updateSelectInput(
-        session,
-        inputId = "county",
-        label   = "Select county",
-        choices = c("All", sort(unique(as.character(data_update$county))))
-      )
-    }
-  })
-  
-  observeEvent(input$type, {
-    if (input$type == "All") {
-      updateSelectInput(
-        session,
-        inputId  = "county",
-        selected = "All"
-      )
     } else {
-      data_update <- mydata %>%
-        filter(type == input$type)
-      
-      updateSelectInput(
-        session,
-        inputId = "county",
-        label   = "Select county",
-        choices = c("All", sort(unique(as.character(data_update$county))))
-      )
-      
-      if (input$region != "All") {
-        data_update <- data_update %>%
-          filter(region == input$region)
-        
-        updateSelectInput(
-          session,
-          inputId = "county",
-          label   = "Select county",
-          choices = c("All", sort(unique(as.character(data_update$county))))
-        )
-      }
+      data_use <- data_output
     }
+    
+    updateSelectInput(
+      session,
+      inputId  = "county",
+      choices  = c("All", sort(unique(as.character(data_use$county)))),
+      selected = "All"
+    )
   })
   
  
@@ -176,14 +118,13 @@ server <- function (input, output, session) {
     
     if (input$region != "All") {
       data_download <- filter(data_download, region == input$region)
+    } else if (input$circuit != "All") {
+      data_download <- filter(data_download, circuit == input$circuit)
     }
-    if (input$type != "All") {
-      data_download <- filter(data_download, type == input$type)
-    }
+    
     if (input$county != "All") {
       data_download <- filter(data_download, county == input$county)
     }
-    na.omit(data_download)
   })
   
   output$downloadData <- downloadHandler(
@@ -202,16 +143,8 @@ server <- function (input, output, session) {
     
     if (input$region != "All") {
       text_output <- paste(input$region, "region")
-      if (input$type != "All") {
-        text_output <- paste(text_output, input$type, sep = ", ")
-      }
       if (input$region == "Cook") {
-        text_output = paste(input$region, "county")
-      }
-    } else if (input$type != "All") {
-      text_output <- input$type
-      if (input$county != "All") {
-        text_output <- input$county
+        text_output = paste("Cook county")
       }
     }
 
@@ -231,18 +164,15 @@ server <- function (input, output, session) {
     if (input$region != "All") {
       data_output <- data_output[data_output$region == input$region, ]
     }
-    if (input$type != "All") {
-      data_output <- data_output[data_output$type == input$type, ]
-    }
     if (input$county != "All") {
       data_output <- data_output[data_output$county == input$county, ]
     }
     
     value <- sum(data_output$violent, data_output$property, na.rm = TRUE)
     
-    if (input$crimeCat == "Violent") {
+    if (input$category == "Violent") {
       value <- value - sum(data_output$property, na.rm = TRUE)
-    } else if (input$crimeCat == "Property") {
+    } else if (input$category == "Property") {
       value <- value - sum(data_output$violent, na.rm = TRUE)
     }
     
@@ -270,9 +200,6 @@ server <- function (input, output, session) {
     if (input$region != "All") {
       data_output <- data_output[data_output$region == input$region, ]
     }
-    if (input$type != "All") {
-      data_output <- data_output[data_output$type == input$type, ]
-    }
     if (input$county != "All") {
       data_output <- data_output[data_output$county == input$county, ]
     }
@@ -292,10 +219,10 @@ server <- function (input, output, session) {
     value_pre <- sum(data_pre$violent, data_pre$property, na.rm = TRUE)
 
     
-    if (input$crimeCat == "Violent") {
+    if (input$category == "Violent") {
       value_max <- sum(data_max$violent, na.rm = TRUE)
       value_pre <- sum(data_pre$violent, na.rm = TRUE)
-    } else if (input$crimeCat == "Property") {
+    } else if (input$category == "Property") {
       value_max <- sum(data_max$property, na.rm = TRUE)
       value_pre <- sum(data_pre$property, na.rm = TRUE)
     }
@@ -316,9 +243,6 @@ server <- function (input, output, session) {
     if (input$region != "All") {
       data_output <- data_output[data_output$region == input$region, ]
     }
-    if (input$type != "All") {
-      data_output <- data_output[data_output$type == input$type, ]
-    }
     if (input$county != "All") {
       data_output <- data_output[data_output$county == input$county, ]
     }
@@ -338,10 +262,10 @@ server <- function (input, output, session) {
     value_min <- sum(data_min$violent, data_min$property, na.rm = TRUE)
     
     
-    if(input$crimeCat == "Violent"){
+    if(input$category == "Violent"){
       value_max <- sum(data_max$violent, na.rm = TRUE)
       value_min <- sum(data_min$violent, na.rm = TRUE)
-    } else if(input$crimeCat == "Property"){
+    } else if(input$category == "Property"){
       value_max <- sum(data_max$property, na.rm = TRUE)
       value_min <- sum(data_min$property, na.rm = TRUE)
     }
@@ -363,28 +287,25 @@ server <- function (input, output, session) {
   output$line_title <- renderText({
     text_output <- "Historical Trend"
     
-    if (input$crimeCat != "All"){
-      paste(text_output, input$crimeCat, sep=": ")
+    if (input$category != "All"){
+      paste(text_output, input$category, sep=": ")
     } else {
       text_output
     }
   })
   
   output$line <- renderHighchart({
-    data_output <- data_output %>%
+    data_line <- data_output %>%
       filter(year %in% seq(input$range[1], input$range[2]))
     
     if(input$region != "All"){
-      data_output <- data_output[data_output$region == input$region,]
-    }
-    if(input$type != "All"){
-      data_output <- data_output[data_output$type == input$type,]
+      data_line <- data_line[data_line$region == input$region, ]
     }
     if(input$county != "All"){
-      data_output <- data_output[data_output$county == input$county,]
+      data_line <- data_line[data_line$county == input$county, ]
     }
     
-    data_plot <- data_output %>%
+    data_plot <- data_line %>%
       group_by(year) %>%
       summarise(
         Violent = ifelse(
@@ -400,16 +321,16 @@ server <- function (input, output, session) {
       ) %>%
       gather(
         Violent, Property,
-        key = "crimeCat",
+        key = "category",
         value = "count"
       )
     
-    if (input$crimeCat != "All") {
-      plot <- filter(data_plot, crimeCat == input$crimeCat) %>%
-        hchart("line", hcaes(x = year, y = count, group = crimeCat, name = crimeCat))
+    if (input$category != "All") {
+      plot <- filter(data_plot, category == input$category) %>%
+        hchart("line", hcaes(x = year, y = count, group = category, name = category))
     } else {
       plot <- data_plot %>%
-        hchart("line", hcaes(x = year, y = count, group = crimeCat, name = crimeCat))
+        hchart("line", hcaes(x = year, y = count, group = category, name = category))
     }
     
     if (input$format == "Count") {
@@ -428,8 +349,8 @@ server <- function (input, output, session) {
   output$pie_title <- renderText({
     text_output <- paste0("Offense Type (", input$range[2],")")
     
-    if(input$crimeCat != "All"){
-      paste(text_output, input$crimeCat, sep = ": ")
+    if(input$category != "All"){
+      paste(text_output, input$category, sep = ": ")
     } else {  
       text_output
     }
@@ -439,13 +360,10 @@ server <- function (input, output, session) {
     data_pie <- mydata
     
     if (input$region != "All") {
-      data_pie <- mydata[mydata$region == input$region,]
-    }
-    if (input$type != "All") {
-      data_pie <- mydata[mydata$type == input$type,]
+      data_pie <- data_pie[data_pie$region == input$region,]
     }
     if (input$county != "All") {
-      data_pie <- mydata[mydata$county == input$county,]
+      data_pie <- data_pie[data_pie$county == input$county,]
     }
     
     data_plot <- data_pie %>%
@@ -492,19 +410,19 @@ server <- function (input, output, session) {
           apply_rate(sum(arson, na.rm = TRUE), sum(population))
         )
       ) %>%
-      gather(Murder:Arson, key="crimeCat", value="count")
+      gather(Murder:Arson, key="category", value="count")
     
-    if (input$crimeCat == "Violent") {
+    if (input$category == "Violent") {
       plot <- data_plot %>%
-        filter(crimeCat %in% c("Murder", "Rape", "Robbery", "Assult")) %>%
-        hchart("pie", hcaes(x = crimeCat, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
-    } else if (input$crimeCat == "Property") {
+        filter(category %in% c("Murder", "Rape", "Robbery", "Assult")) %>%
+        hchart("pie", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
+    } else if (input$category == "Property") {
       plot <- data_plot %>%
-        filter(crimeCat %in% c("Burglary", "LarcenyTft", "MVTft", "Arson")) %>%
-        hchart("pie", hcaes(x = crimeCat, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
+        filter(category %in% c("Burglary", "LarcenyTft", "MVTft", "Arson")) %>%
+        hchart("pie", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
     } else {
       plot <- data_plot %>%
-        hchart("pie", hcaes(x = crimeCat, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
+        hchart("pie", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
     }
     
     plot %>%
@@ -516,8 +434,8 @@ server <- function (input, output, session) {
   output$map_title <- renderText({
     text_output <- paste0("Distribution (", input$range[2],")")
     
-    if(input$crimeCat != "All"){
-      paste(text_output, input$crimeCat, sep=": ")
+    if(input$category != "All"){
+      paste(text_output, input$category, sep=": ")
     } else {
       text_output
     }
@@ -525,29 +443,29 @@ server <- function (input, output, session) {
   
   output$map <- renderLeaflet({
     map_selected <- mymap
-    data_output <- data_output %>%
+    data_map <- data_output %>%
       filter(year == input$range[2])
 
-    if (input$crimeCat == "Property") {
+    if (input$category == "Property") {
       if (input$format == "Count") {
-        my_attr <- data_output %>%
+        my_attr <- data_map %>%
           mutate(data = property)
       } else {
-        my_attr <- data_output %>%
+        my_attr <- data_map %>%
           mutate(data = apply_rate(property, population))
       }
         my_attr <- select(my_attr, name = county, data)
-    } else if (input$crimeCat == "Violent") {
+    } else if (input$category == "Violent") {
       if (input$format == "Count") {
-        my_attr <- data_output %>%
+        my_attr <- data_map %>%
           mutate(data = violent)
       } else {
-        my_attr <- data_output %>%
+        my_attr <- data_map %>%
           mutate(data = apply_rate(violent, population))
       }
       my_attr <- select(my_attr, name = county, data)
     } else {
-      my_attr <- data_output %>%
+      my_attr <- data_map %>%
         group_by(name = county) %>%
         summarise(
           data = ifelse(
@@ -567,13 +485,6 @@ server <- function (input, output, session) {
         map_selected2 <- map_selected2[map_selected2$name == "Cook", ]
       } else {
         map_selected2 <- map_selected2[map_selected2$region == input$region, ]
-      }
-    }
-    if (input$type != "All") {
-      if (input$type == "Cook") {
-        map_selected2 <- map_selected2[map_selected2$name == "Cook", ]
-      } else {
-        map_selected2 <- map_selected2[map_selected2$type == input$type, ]
       }
     }
     if (input$county != "All") {
@@ -620,23 +531,20 @@ server <- function (input, output, session) {
 
   # data table------------------------------------------------------------------
   output$dataTable <- renderDataTable({
-    data_output <- data_output %>%
+    data_table <- data_output %>%
       filter(year %in% seq(input$range[1], input$range[2]))
 
     if(input$region != "All"){
-      data_output <- data_output[data_output$region == input$region, ]
-    }
-    if(input$type != "All"){
-      data_output <- data_output[data_output$type == input$type, ]
+      data_table <- data_output[data_table$region == input$region, ]
     }
     if(input$county != "All"){
-      data_output <- data_output[data_output$county == input$county, ]
+      data_table <- data_output[data_table$county == input$county, ]
     }
     
     if (input$format == "Count") {
-      data_output  
+      data_table  
     } else {
-      data_output %>%
+      data_table %>%
         mutate(
           violent = apply_rate(violent, population),
           property = apply_rate(property, population)

@@ -85,7 +85,7 @@ ui <- shinyUI(fluidPage(
         selected = "Count"
       ),
       radioButtons(
-        "crimeCat",
+        "category",
         "Select crime category",
         choices = c("All", "Property", "Violent"),
         selected = "All"
@@ -105,12 +105,12 @@ ui <- shinyUI(fluidPage(
         choices = c("All", sort(unique(as.character(mydata$region)))),
         selected = "All"
       ),
-      selectInput(
-        "type",
-        "Select county type",
-        choices = c("All", sort(unique(as.character(mydata$type)))),
-        selected = "All"
-      ),
+      # selectInput(
+      #   "circuit",
+      #   "Select judicial circuit",
+      #   choices = c("All", sort(unique(as.character(mydata$circuit)))),
+      #   selected = "All"
+      # ),
       selectInput(
         "county",
         "Select county",
