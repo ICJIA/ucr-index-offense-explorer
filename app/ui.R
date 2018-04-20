@@ -3,24 +3,21 @@
 # Last revised: 2018-04-20
 # Script title: ui.R
 #-------------------------------------------------------------------------------
-# Script description:
-# The current script is to define UI for the Shiny application for ISP data.
-# (develop) v2.0: Without shinydashboard
-#-------------------------------------------------------------------------------
 
 
 # PREPARE FOR THE SESSION #
 #-------------------------------------------------------------------------------
 options(shiny.sanitize.errors = FALSE)
 
+
 # import packages
 library(shiny)
 library(shinyjs)
-library(shinycssloaders)
 library(DT)
 library(leaflet)
 library(highcharter)
 library(dplyr)
+library(shinycssloaders)
 
 
 # import data
@@ -85,7 +82,7 @@ ui <- shinyUI(fluidPage(
         selected = "Count"
       ),
       radioButtons(
-        "crimeCat",
+        "category",
         "Select crime category",
         choices = c("All", "Property", "Violent"),
         selected = "All"
@@ -105,12 +102,12 @@ ui <- shinyUI(fluidPage(
         choices = c("All", sort(unique(as.character(mydata$region)))),
         selected = "All"
       ),
-      selectInput(
-        "type",
-        "Select county type",
-        choices = c("All", sort(unique(as.character(mydata$type)))),
-        selected = "All"
-      ),
+      # selectInput(
+      #   "circuit",
+      #   "Select judicial circuit",
+      #   choices = c("All", sort(unique(as.character(mydata$circuit)))),
+      #   selected = "All"
+      # ),
       selectInput(
         "county",
         "Select county",

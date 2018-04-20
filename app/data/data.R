@@ -4,13 +4,12 @@ library(dplyr)
 
 # generate mydata
 mydata <- crimes_isp %>%
-  left_join(select(counties@data, county = name, region, type)) %>%
+  left_join(select(counties@data, county = name, region)) %>%
   left_join(select(populations, -fips)) %>%
   select(
     year,
     county,
     region,
-    type,
     population,
     violent_crime:arson
   ) %>%
