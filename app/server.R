@@ -3,14 +3,9 @@
 # Last revised: 2018-04-20
 # Script title: server.R
 #-------------------------------------------------------------------------------
-# Script description:
-# The current script is to define server logic for the Shiny application
-# for ISP data.
-# (develop) v2.0: Without shinydashboard
-#-------------------------------------------------------------------------------
 
 
-# PREPARE FOR THE SESSIONS #
+# PREPARE FOR THE SESSION #
 #-------------------------------------------------------------------------------
 options(shiny.sanitize.errors = FALSE)
 
@@ -19,11 +14,11 @@ options(shiny.sanitize.errors = FALSE)
 library(shiny)
 library(shinyjs)
 library(DT)
-library(rgdal)
 library(leaflet)
 library(highcharter)
-library(tidyr)
 library(dplyr)
+library(tidyr)
+library(rgdal)
 
 
 # import data

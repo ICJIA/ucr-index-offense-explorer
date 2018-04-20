@@ -3,24 +3,21 @@
 # Last revised: 2018-04-20
 # Script title: ui.R
 #-------------------------------------------------------------------------------
-# Script description:
-# The current script is to define UI for the Shiny application for ISP data.
-# (develop) v2.0: Without shinydashboard
-#-------------------------------------------------------------------------------
 
 
 # PREPARE FOR THE SESSION #
 #-------------------------------------------------------------------------------
 options(shiny.sanitize.errors = FALSE)
 
+
 # import packages
 library(shiny)
 library(shinyjs)
-library(shinycssloaders)
 library(DT)
 library(leaflet)
 library(highcharter)
 library(dplyr)
+library(shinycssloaders)
 
 
 # import data
