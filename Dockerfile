@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y \
     libproj-dev
 
 # install R packages specfic to the app
-RUN R -e "install.packages(c('shinyjs', 'shinycssloaders', 'DT', 'rgdal', 'leaflet', 'highcharter', 'dplyr', 'tidyr'), repos='https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('shinyjs', 'shinycssloaders', 'DT', 'rgdal', 'leaflet', 'highcharter', 'dplyr', 'tidyr'))"
 
 # copy the app to the image
 RUN mkdir /root/app
