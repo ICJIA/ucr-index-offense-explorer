@@ -620,7 +620,12 @@ server <- function (input, output, session) {
         color = "darkgrey",
         fillOpacity = 0.8,
         fillColor = ~fill_color(data),
-        label = ~paste0(as.character(name), ": ", round(data, 2)),
+        label = ~paste0(
+          as.character(name),
+          ifelse(input$format == "Count", " (count)", " (rate)"),
+          ": ",
+          round(data, 2)
+        ),
         labelOptions = labelOptions(
           offset = c(0, -45),
           direction = "top",
