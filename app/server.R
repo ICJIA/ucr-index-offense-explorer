@@ -55,6 +55,12 @@ server <- function (input, output, session) {
   observeEvent(input$reset,{
     updateRadioButtons(
       session,
+      inputId  = "format",
+      selected = "Count"
+    )
+    
+    updateRadioButtons(
+      session,
       inputId  = "category",
       selected = "All"
     )
@@ -69,13 +75,6 @@ server <- function (input, output, session) {
       session,
       inputId  = "region",
       choices  = c("All", sort(unique(as.character(data_output$region)))),
-      selected = "All"
-    )
-    
-    updateSelectInput(
-      session,
-      inputId  = "circuit",
-      choices  = c("All", sort(unique(as.character(data_output$circuit)))),
       selected = "All"
     )
     
