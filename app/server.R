@@ -30,6 +30,12 @@ library(dplyr)
 load("data/data.rda")
 
 
+# define a function to use
+apply_rate <- function(count, population) {
+  round(count / population * 100000, 2)
+}
+
+
 # DEFINE SERVER LOGIC #
 #---------------------------------------------------------------------------
 server <- function (input, output, session) {
@@ -285,7 +291,7 @@ server <- function (input, output, session) {
       tags$h1(round(value, 2)),
       tags$p(
         span(icon("bar-chart"), style="color:yellow;"),
-        paste0("Crime rate in ", input$range[2], " (per 100K)"),
+        paste0("Crime rate in ", input$range[2]),
         style="font-size:1.1em;"
       )
     )
@@ -399,20 +405,41 @@ server <- function (input, output, session) {
     data_plot <- data_output %>%
       group_by(year) %>%
       summarise(
-        Violent = sum(violent, na.rm = TRUE),
-        Property = sum(property, na.rm = TRUE)
+        Violent = ifelse(
+          input$format == "Count",
+          sum(violent, na.rm = TRUE),
+          apply_rate(sum(violent, na.rm = TRUE), sum(population))
+        ), 
+        Property = ifelse(
+          input$format == "Count",
+          sum(property, na.rm = TRUE),
+          apply_rate(sum(property, na.rm = TRUE), sum(population))
+        )
       ) %>%
-      gather(Violent, Property, key = "crimeCat", value = "count")
+      gather(
+        Violent, Property,
+        key = "crimeCat",
+        value = "count"
+      )
     
     if (input$crimeCat != "All") {
-      plot <- hchart(filter(data_plot, crimeCat == input$crimeCat), "line", hcaes(x = year, y = count))
+      plot <- filter(data_plot, crimeCat == input$crimeCat) %>%
+        hchart("line", hcaes(x = year, y = count, name = crimeCat))
     } else {
-      plot <- hchart(data_plot, "line", hcaes(x = year, y = count, group = crimeCat))
+      plot <- data_plot %>%
+        hchart("line", hcaes(x = year, y = count, group = crimeCat, name = crimeCat))
     }
     
-    plot %>%
-      hc_yAxis(min = 0) %>%
-      hc_add_theme(hc_theme_sandsignika())
+    if (input$format == "Count") {
+      plot %>%
+        hc_yAxis(min = 0) %>%
+        hc_add_theme(hc_theme_sandsignika())  
+    } else {
+      plot %>%
+        hc_yAxis(title = list(text = "rate (per 100k)"), min = 0) %>%
+        hc_add_theme(hc_theme_sandsignika())  
+    }
+    
   })
 
   
@@ -445,28 +472,60 @@ server <- function (input, output, session) {
     data_plot <- data_pie %>%
       filter(year == input$range[2]) %>%
       summarise(
-        Murder     = sum(murder, na.rm = TRUE),
-        Rape       = sum(rape, na.rm = TRUE),
-        Robbery    = sum(robbery, na.rm = TRUE),
-        Assult     = sum(assault, na.rm = TRUE),
-        Burglary   = sum(burglary, na.rm = TRUE),
-        LarcenyTft = sum(larcenytft, na.rm = TRUE),
-        MVTft      = sum(mvtft, na.rm = TRUE),
-        Arson      = sum(arson, na.rm = TRUE)
+        Murder = ifelse(
+          input$format == "Count",
+          sum(murder, na.rm = TRUE),
+          apply_rate(sum(murder, na.rm = TRUE), sum(population))
+        ),
+        Rape = ifelse(
+          input$format == "Count",
+          sum(rape, na.rm = TRUE),
+          apply_rate(sum(rape, na.rm = TRUE), sum(population))
+        ),
+        Robbery = ifelse(
+          input$format == "Count",
+          sum(robbery, na.rm = TRUE),
+          apply_rate(sum(robbery, na.rm = TRUE), sum(population))
+        ),
+        Assault = ifelse(
+          input$format == "Count",
+          sum(assault, na.rm = TRUE),
+          apply_rate(sum(assault, na.rm = TRUE), sum(population))
+        ),
+        Burglary = ifelse(
+          input$format == "Count",
+          sum(burglary, na.rm = TRUE),
+          apply_rate(sum(burglary, na.rm = TRUE), sum(population))
+        ),
+        LarcenyTft = ifelse(
+          input$format == "Count",
+          sum(larcenytft, na.rm = TRUE),
+          apply_rate(sum(larcenytft, na.rm = TRUE), sum(population))
+        ),
+        MVTft = ifelse(
+          input$format == "Count",
+          sum(mvtft, na.rm = TRUE),
+          apply_rate(sum(mvtft, na.rm = TRUE), sum(population))
+        ),
+        Arson = ifelse(
+          input$format == "Count",
+          sum(arson, na.rm = TRUE),
+          apply_rate(sum(arson, na.rm = TRUE), sum(population))
+        )
       ) %>%
       gather(Murder:Arson, key="crimeCat", value="count")
     
     if (input$crimeCat == "Violent") {
       plot <- data_plot %>%
         filter(crimeCat %in% c("Murder", "Rape", "Robbery", "Assult")) %>%
-        hchart("pie", hcaes(x=crimeCat, y=count))
+        hchart("pie", hcaes(x = crimeCat, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
     } else if (input$crimeCat == "Property") {
       plot <- data_plot %>%
         filter(crimeCat %in% c("Burglary", "LarcenyTft", "MVTft", "Arson")) %>%
-        hchart("pie", hcaes(x=crimeCat, y=count), name="count")
+        hchart("pie", hcaes(x = crimeCat, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
     } else {
       plot <- data_plot %>%
-        hchart("pie", hcaes(x=crimeCat, y=count), name="count")
+        hchart("pie", hcaes(x = crimeCat, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
     }
     
     plot %>%
@@ -492,15 +551,33 @@ server <- function (input, output, session) {
       filter(year == input$range[2])
 
     if (input$crimeCat == "Property") {
-      my_attr <- data_output %>%
-        select(name = county, data = property)
+      if (input$format == "Count") {
+        my_attr <- data_output %>%
+          mutate(data = property)
+      } else {
+        my_attr <- data_output %>%
+          mutate(data = apply_rate(property, population))
+      }
+        my_attr <- select(my_attr, name = county, data)
     } else if (input$crimeCat == "Violent") {
-      my_attr <- data_output %>%
-        select(name = county, data = violent)
+      if (input$format == "Count") {
+        my_attr <- data_output %>%
+          mutate(data = violent)
+      } else {
+        my_attr <- data_output %>%
+          mutate(data = apply_rate(violent, population))
+      }
+      my_attr <- select(my_attr, name = county, data)
     } else {
       my_attr <- data_output %>%
         group_by(name = county) %>%
-        summarise(data = sum(violent, property))
+        summarise(
+          data = ifelse(
+            input$format == "Count",
+            sum(violent, property),
+            apply_rate(sum(violent, property), sum(population))
+          )
+        )
     }
       
     map_selected@data <- map_selected@data %>%
@@ -526,7 +603,7 @@ server <- function (input, output, session) {
     }
     
     fill_color <- colorQuantile("YlOrRd", map_selected$data)
-    
+
     leaflet() %>%
       addProviderTiles("CartoDB.Positron") %>%
       setView(lng = -89.3, lat = 39.8, zoom = 6) %>%
@@ -543,7 +620,12 @@ server <- function (input, output, session) {
         color = "darkgrey",
         fillOpacity = 0.8,
         fillColor = ~fill_color(data),
-        label = ~paste0(as.character(name), ": ", round(data, 2)),
+        label = ~paste0(
+          as.character(name),
+          ifelse(input$format == "Count", " (count)", " (rate)"),
+          ": ",
+          round(data, 2)
+        ),
         labelOptions = labelOptions(
           offset = c(0, -45),
           direction = "top",
@@ -574,9 +656,15 @@ server <- function (input, output, session) {
       data_output <- data_output[data_output$county == input$county, ]
     }
     
-    data_output[!is.na(data_output$county), ]
-  },
-  rownames = FALSE
-  )
+    if (input$format == "Count") {
+      data_output  
+    } else {
+      data_output %>%
+        mutate(
+          violent = apply_rate(violent, population),
+          property = apply_rate(property, population)
+        )
+    }
+  }, rownames = FALSE)
   
 }

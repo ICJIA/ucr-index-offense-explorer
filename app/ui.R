@@ -79,6 +79,12 @@ ui <- shinyUI(fluidPage(
       id ="sidebar",
       width = 3,
       radioButtons(
+        "format",
+        "Select data format",
+        choices = c("Count", "Rate (per 100K)"),
+        selected = "Count"
+      ),
+      radioButtons(
         "crimeCat",
         "Select crime category",
         choices = c("All", "Property", "Violent"),
@@ -148,10 +154,20 @@ ui <- shinyUI(fluidPage(
       
       fluidRow(
         class = "kpis",
-        column(3, uiOutput("kpi_box_1"), class = "kpi"),
-        column(3, uiOutput("kpi_box_2"), class = "kpi"),
-        column(3, uiOutput("kpi_box_3"), class = "kpi"),
-        column(3, uiOutput("kpi_box_4"), class = "kpi")
+        column(
+          4,
+          class = "kpi",
+          conditionalPanel(
+            condition = "input.format == 'Count'",
+            uiOutput("kpi_box_1")
+          ),
+          conditionalPanel(
+            condition = "input.format != 'Count'",
+            uiOutput("kpi_box_2")
+          )
+        ),
+        column(4, uiOutput("kpi_box_3"), class = "kpi"),
+        column(4, uiOutput("kpi_box_4"), class = "kpi")
       ),
       
       fluidRow(
@@ -163,7 +179,7 @@ ui <- shinyUI(fluidPage(
       fluidRow(
         id="data-table",
         column(
-          12, style = "padding:20px;",
+          12, style = "padding:0 20px;",
           h3("Data Table"),
           withSpinner(dataTableOutput("dataTable"), type = 4))
       )
