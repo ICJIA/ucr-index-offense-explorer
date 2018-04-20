@@ -2,15 +2,15 @@
 # Created: 2017-10-31
 # Last revised: 2018-04-20
 # Script title: ui.R
-#---------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Script description:
 # The current script is to define UI for the Shiny application for ISP data.
 # (develop) v2.0: Without shinydashboard
-#---------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 
 # PREPARE FOR THE SESSION #
-#---------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 options(shiny.sanitize.errors = FALSE)
 
 # import packages
@@ -32,7 +32,7 @@ jscode <- "shinyjs.toggleSidebar = function() { $('div.col-sm-3').has('form').to
 
 
 # DEFINE UI #
-#---------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 ui <- shinyUI(fluidPage(
   
   # HEAD
@@ -96,7 +96,8 @@ ui <- shinyUI(fluidPage(
         min = min(as.integer(mydata$year)),
         max = max(as.integer(mydata$year)),
         value = c(min(as.integer(mydata$year)), max(as.integer(mydata$year))),
-        step = 1
+        step = 1,
+        sep = ""
       ),
       selectInput(
         "region",
@@ -154,20 +155,9 @@ ui <- shinyUI(fluidPage(
       
       fluidRow(
         class = "kpis",
-        column(
-          4,
-          class = "kpi",
-          conditionalPanel(
-            condition = "input.format == 'Count'",
-            uiOutput("kpi_box_1")
-          ),
-          conditionalPanel(
-            condition = "input.format != 'Count'",
-            uiOutput("kpi_box_2")
-          )
-        ),
-        column(4, uiOutput("kpi_box_3"), class = "kpi"),
-        column(4, uiOutput("kpi_box_4"), class = "kpi")
+        column(4, uiOutput("kpi_box_1"), class = "kpi"),
+        column(4, uiOutput("kpi_box_2"), class = "kpi"),
+        column(4, uiOutput("kpi_box_3"), class = "kpi")
       ),
       
       fluidRow(

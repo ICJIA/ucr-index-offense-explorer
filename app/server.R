@@ -2,16 +2,16 @@
 # Created: 2017-10-31
 # Last revised: 2018-04-20
 # Script title: server.R
-#---------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Script description:
 # The current script is to define server logic for the Shiny application
 # for ISP data.
 # (develop) v2.0: Without shinydashboard
-#---------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 
 # PREPARE FOR THE SESSIONS #
-#---------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 options(shiny.sanitize.errors = FALSE)
 
 
@@ -36,10 +36,15 @@ apply_rate <- function(count, population) {
 }
 
 
+# highcharter option
+hcoptslang <- getOption("highcharter.lang")
+hcoptslang$thousandsSep <- ","
+options(highcharter.lang = hcoptslang)
+
+
 # DEFINE SERVER LOGIC #
-#---------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 server <- function (input, output, session) {
-  
   # toggle sidebar
   observeEvent(input$toggleSidebar, {
     toggleCssClass("main", "col-sm-9")
@@ -47,14 +52,12 @@ server <- function (input, output, session) {
   })
 
 
-  # data output-------------------------------------------------------------
+  # data output-----------------------------------------------------------------
   data_output <- mydata %>%
     select(1:5, violent = violent_crime, property = property_crime)
   
-  
   # reset filtering
   observeEvent(input$reset,{
-    
     updateRadioButtons(
       session,
       inputId  = "crimeCat",
@@ -90,9 +93,8 @@ server <- function (input, output, session) {
   })
   
   
-  # filtering data----------------------------------------------------------
+  # filtering data--------------------------------------------------------------
   observeEvent(input$region, {
-
     if (input$region == "All") {
       updateSelectInput(
         session,
@@ -135,7 +137,6 @@ server <- function (input, output, session) {
   })
   
   observeEvent(input$type, {
-    
     if (input$type == "All") {
       updateSelectInput(
         session,
@@ -168,7 +169,7 @@ server <- function (input, output, session) {
   })
   
  
-  # data to download--------------------------------------------------------
+  # download data---------------------------------------------------------------
   dataDownload <- reactive({
     data_download <- mydata %>%
       filter(year %in% seq(input$range[1], input$range[2]))
@@ -185,8 +186,6 @@ server <- function (input, output, session) {
     na.omit(data_download)
   })
   
-
-  # download data-----------------------------------------------------------
   output$downloadData <- downloadHandler(
     filename = function() {
       paste("data-filtered-", Sys.Date(), ".csv", sep = "")
@@ -197,9 +196,8 @@ server <- function (input, output, session) {
   )
 
     
-  # Text on the top---------------------------------------------------------
+  # Text on the top-------------------------------------------------------------
   output$current <- renderText({
-    
     text_output <- "Illinois"
     
     if (input$region != "All") {
@@ -225,9 +223,8 @@ server <- function (input, output, session) {
   })
   
   
-  # Value Boxes ------------------------------------------------------------
+  # KPIs -----------------------------------------------------------------------
   output$kpi_box_1 <- renderUI({
-    
     data_output <- data_output %>%
       filter(year == input$range[2])
     
@@ -240,31 +237,36 @@ server <- function (input, output, session) {
     if (input$county != "All") {
       data_output <- data_output[data_output$county == input$county, ]
     }
-
+    
     value <- sum(data_output$violent, data_output$property, na.rm = TRUE)
     
     if (input$crimeCat == "Violent") {
       value <- value - sum(data_output$property, na.rm = TRUE)
     } else if (input$crimeCat == "Property") {
       value <- value - sum(data_output$violent, na.rm = TRUE)
-    } 
+    }
     
-    if (value > 10000) {
-      value <- paste(round(value / 1000), "K", sep = "")
+    if(input$format == "Count") {
+      desc <- paste0("Offenses in ", input$range[2])
+      if (value > 10000) {
+        value <- paste(round(value / 1000), "K", sep = "")
+      }
+    } else {
+      desc <- paste0("Crime rate in ", input$range[2])
+      value <- apply_rate(value, sum(data_output$population, na.rm = TRUE))
     }
     
     tagList(
       tags$h1(value),
       tags$p(
         span(icon("bar-chart"), style="color:yellow;"),
-        paste0("Offenses in ", input$range[2]),
+        desc,
         style="font-size:1.1em;"
       )
     )
   })
   
   output$kpi_box_2 <- renderUI({
-    
     if (input$region != "All") {
       data_output <- data_output[data_output$region == input$region, ]
     }
@@ -274,47 +276,21 @@ server <- function (input, output, session) {
     if (input$county != "All") {
       data_output <- data_output[data_output$county == input$county, ]
     }
-    
-    data_max <- data_output[data_output$year == input$range[2], ]
-    crime_max <- sum(data_max$violent, data_max$property, na.rm = TRUE)
-    pop_max <- sum(data_max$population, na.rm = TRUE)
-    
-    if (input$crimeCat == "Violent") {
-      crime_max <- sum(data_max$violent, na.rm = TRUE)
-    } else if (input$crimeCat == "Property") {
-      crime_max <- sum(data_max$property, na.rm = TRUE)
+
+    if (input$format != "Count") {
+      data_output <- data_output %>%
+        mutate(
+          violent = apply_rate(violent, population),
+          property =apply_rate(property, population)
+        )
     }
-    
-    value <- crime_max / pop_max * 100000
-    
-    tagList(
-      tags$h1(round(value, 2)),
-      tags$p(
-        span(icon("bar-chart"), style="color:yellow;"),
-        paste0("Crime rate in ", input$range[2]),
-        style="font-size:1.1em;"
-      )
-    )
-  })
-  
-  output$kpi_box_3 <- renderUI({
-    
-    if (input$region != "All") {
-      data_output <- data_output[data_output$region == input$region, ]
-    }
-    if (input$type != "All") {
-      data_output <- data_output[data_output$type == input$type, ]
-    }
-    if (input$county != "All") {
-      data_output <- data_output[data_output$county == input$county, ]
-    }
-    
+        
     data_max <- data_output[data_output$year == input$range[2], ]
     data_pre <- data_output[data_output$year == input$range[2] - 1, ]
-    
+
     value_max <- sum(data_max$violent, data_max$property, na.rm = TRUE)
     value_pre <- sum(data_pre$violent, data_pre$property, na.rm = TRUE)
-    
+
     
     if (input$crimeCat == "Violent") {
       value_max <- sum(data_max$violent, na.rm = TRUE)
@@ -330,14 +306,13 @@ server <- function (input, output, session) {
       tags$h1(value),
       tags$p(
         span(icon("percent"), style="color:#337ab7;"),
-        paste0("Change, ", input$range[2] - 1, "-", substr(input$range[2], 3, 4)),
+        paste0("Change, ", input$range[2] - 1, "-", input$range[2]),
         style="font-size:1.1em;"
       )
     )
   })
   
-  output$kpi_box_4 <- renderUI({
-    
+  output$kpi_box_3 <- renderUI({
     if (input$region != "All") {
       data_output <- data_output[data_output$region == input$region, ]
     }
@@ -346,6 +321,14 @@ server <- function (input, output, session) {
     }
     if (input$county != "All") {
       data_output <- data_output[data_output$county == input$county, ]
+    }
+    
+    if (input$format != "Count") {
+      data_output <- data_output %>%
+        mutate(
+          violent = apply_rate(violent, population),
+          property =apply_rate(property, population)
+        )
     }
     
     data_max <- data_output[data_output$year == input$range[2], ]
@@ -369,26 +352,25 @@ server <- function (input, output, session) {
       tags$h1(value),
       tags$p(
         span(icon("percent"), style="color:#337ab7;"),
-        paste0("Change, ", input$range[1], "-", substr(input$range[2], 3, 4)),
+        paste0("Change, ", input$range[1], "-", input$range[2]),
         style="font-size:1.1em;"
       )
     )
   })
   
 
-  # historical trend line chart---------------------------------------------
+  # historical trend line chart-------------------------------------------------
   output$line_title <- renderText({
-    
     text_output <- "Historical Trend"
     
-    if(input$crimeCat != "All"){
-      text_output <- paste(text_output, input$crimeCat, sep=": ")
-    } 
-    text_output
+    if (input$crimeCat != "All"){
+      paste(text_output, input$crimeCat, sep=": ")
+    } else {
+      text_output
+    }
   })
   
   output$line <- renderHighchart({
-    
     data_output <- data_output %>%
       filter(year %in% seq(input$range[1], input$range[2]))
     
@@ -439,24 +421,21 @@ server <- function (input, output, session) {
         hc_yAxis(title = list(text = "rate (per 100k)"), min = 0) %>%
         hc_add_theme(hc_theme_sandsignika())  
     }
-    
   })
 
   
-  # Offense type pie chart----------------------------------------------
+  # Offense type pie chart------------------------------------------------------
   output$pie_title <- renderText({
-    
     text_output <- paste0("Offense Type (", input$range[2],")")
     
     if(input$crimeCat != "All"){
-      text_output <- paste(text_output, input$crimeCat, sep = ": ")
-    } 
-    text_output
+      paste(text_output, input$crimeCat, sep = ": ")
+    } else {  
+      text_output
+    }
   })
   
-  
   output$pie <- renderHighchart({
-    
     data_pie <- mydata
     
     if (input$region != "All") {
@@ -533,19 +512,18 @@ server <- function (input, output, session) {
   })
 
   
-  # Distribution map-------------------------------------------------------
+  # Distribution map------------------------------------------------------------
   output$map_title <- renderText({
-    
     text_output <- paste0("Distribution (", input$range[2],")")
     
     if(input$crimeCat != "All"){
-      text_output <- paste(text_output, input$crimeCat, sep=": ")
-    } 
-    text_output
+      paste(text_output, input$crimeCat, sep=": ")
+    } else {
+      text_output
+    }
   })
   
   output$map <- renderLeaflet({
-    
     map_selected <- mymap
     data_output <- data_output %>%
       filter(year == input$range[2])
@@ -624,7 +602,7 @@ server <- function (input, output, session) {
           as.character(name),
           ifelse(input$format == "Count", " (count)", " (rate)"),
           ": ",
-          round(data, 2)
+          prettyNum(round(data, 2), big.mark=",")
         ),
         labelOptions = labelOptions(
           offset = c(0, -45),
@@ -640,9 +618,8 @@ server <- function (input, output, session) {
       )
   })
 
-  # data table--------------------------------------------------------------
+  # data table------------------------------------------------------------------
   output$dataTable <- renderDataTable({
-    
     data_output <- data_output %>%
       filter(year %in% seq(input$range[1], input$range[2]))
 
@@ -666,5 +643,4 @@ server <- function (input, output, session) {
         )
     }
   }, rownames = FALSE)
-  
 }
