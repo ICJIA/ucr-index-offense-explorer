@@ -424,7 +424,7 @@ server <- function (input, output, session) {
     
     if (input$crimeCat != "All") {
       plot <- filter(data_plot, crimeCat == input$crimeCat) %>%
-        hchart("line", hcaes(x = year, y = count, name = crimeCat))
+        hchart("line", hcaes(x = year, y = count, group = crimeCat, name = crimeCat))
     } else {
       plot <- data_plot %>%
         hchart("line", hcaes(x = year, y = count, group = crimeCat, name = crimeCat))
