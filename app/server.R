@@ -423,9 +423,11 @@ server <- function (input, output, session) {
       )
     
     if (input$crimeCat != "All") {
-      plot <- hchart(filter(data_plot, crimeCat == input$crimeCat), "line", hcaes(x = year, y = count))
+      plot <- filter(data_plot, crimeCat == input$crimeCat) %>%
+        hchart("line", hcaes(x = year, y = count, name = crimeCat))
     } else {
-      plot <- hchart(data_plot, "line", hcaes(x = year, y = count, group = crimeCat))
+      plot <- data_plot %>%
+        hchart("line", hcaes(x = year, y = count, group = crimeCat, name = crimeCat))
     }
     
     if (input$format == "Count") {
@@ -516,14 +518,14 @@ server <- function (input, output, session) {
     if (input$crimeCat == "Violent") {
       plot <- data_plot %>%
         filter(crimeCat %in% c("Murder", "Rape", "Robbery", "Assult")) %>%
-        hchart("pie", hcaes(x=crimeCat, y=count))
+        hchart("pie", hcaes(x = crimeCat, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
     } else if (input$crimeCat == "Property") {
       plot <- data_plot %>%
         filter(crimeCat %in% c("Burglary", "LarcenyTft", "MVTft", "Arson")) %>%
-        hchart("pie", hcaes(x=crimeCat, y=count), name=" ")
+        hchart("pie", hcaes(x = crimeCat, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
     } else {
       plot <- data_plot %>%
-        hchart("pie", hcaes(x=crimeCat, y=count), name=" ")
+        hchart("pie", hcaes(x = crimeCat, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
     }
     
     plot %>%
@@ -549,25 +551,23 @@ server <- function (input, output, session) {
       filter(year == input$range[2])
 
     if (input$crimeCat == "Property") {
-      my_attr <- data_output %>%
-        mutate(
-          property = ifelse(
-            input$format == "Count",
-            property,
-            apply_rate(property, population)
-          )
-        ) %>%
-        select(name = county, data = property)
+      if (input$format == "Count") {
+        my_attr <- data_output %>%
+          mutate(data = property)
+      } else {
+        my_attr <- data_output %>%
+          mutate(data = apply_rate(property, population))
+      }
+        my_attr <- select(my_attr, name = county, data)
     } else if (input$crimeCat == "Violent") {
-      my_attr <- data_output %>%
-        mutate(
-          violent = ifelse(
-            input$format == "Count",
-            violent,
-            apply_rate(violent, population)
-          )
-        ) %>%
-        select(name = county, data = violent)
+      if (input$format == "Count") {
+        my_attr <- data_output %>%
+          mutate(data = violent)
+      } else {
+        my_attr <- data_output %>%
+          mutate(data = apply_rate(violent, population))
+      }
+      my_attr <- select(my_attr, name = county, data)
     } else {
       my_attr <- data_output %>%
         group_by(name = county) %>%
@@ -603,7 +603,7 @@ server <- function (input, output, session) {
     }
     
     fill_color <- colorQuantile("YlOrRd", map_selected$data)
-    
+
     leaflet() %>%
       addProviderTiles("CartoDB.Positron") %>%
       setView(lng = -89.3, lat = 39.8, zoom = 6) %>%
