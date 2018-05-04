@@ -158,9 +158,10 @@ ui <- shinyUI(fluidPage(
       ),
       
       fluidRow(
-        column(4, h3(textOutput("line_title")), withSpinner(highchartOutput("line"), type = 4)),
-        column(4, h3(textOutput("bar_title")), withSpinner(highchartOutput("bar"), type = 4)),
-        column(4, h3(textOutput("map_title")), withSpinner(leafletOutput("map"), type = 4))
+        class = "plots",
+        column(4, class = "plot_line", h3(textOutput("line_title")), withSpinner(highchartOutput("line"), type = 4)),
+        column(4, class = "plot_bar", h3(textOutput("bar_title")), withSpinner(highchartOutput("bar"), type = 4)),
+        column(4, class = "plot_map", h3(textOutput("map_title")), withSpinner(leafletOutput("map"), type = 4))
       ),
       
       fluidRow(
