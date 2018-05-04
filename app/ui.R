@@ -159,7 +159,7 @@ ui <- shinyUI(fluidPage(
       
       fluidRow(
         column(4, h3(textOutput("line_title")), withSpinner(highchartOutput("line"), type = 4)),
-        column(4, h3(textOutput("pie_title")), withSpinner(highchartOutput("pie"), type = 4)),
+        column(4, h3(textOutput("bar_title")), withSpinner(highchartOutput("bar"), type = 4)),
         column(4, h3(textOutput("map_title")), withSpinner(leafletOutput("map"), type = 4))
       ),
       
@@ -255,7 +255,7 @@ ui <- shinyUI(fluidPage(
         style = "font-size: 13px; text-align:center;",
         p(
           HTML("&copy;"),
-          "2018",
+          format(Sys.Date(), "%Y"),
            a(
              "Illinois Criminal Justice Information Authority",
              href = "http://www.icjia.state.il.us/",

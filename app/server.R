@@ -340,7 +340,7 @@ server <- function (input, output, session) {
 
   
   # Offense type pie chart------------------------------------------------------
-  output$pie_title <- renderText({
+  output$bar_title <- renderText({
     text_output <- paste0("Offense Type (", input$range[2],")")
     
     if(input$category != "All"){
@@ -350,17 +350,17 @@ server <- function (input, output, session) {
     }
   })
   
-  output$pie <- renderHighchart({
-    data_pie <- mydata
+  output$bar <- renderHighchart({
+    data_bar <- mydata
     
     if (input$region != "All") {
-      data_pie <- data_pie[data_pie$region == input$region,]
+      data_bar <- data_bar[data_pie$region == input$region,]
     }
     if (input$county != "All") {
-      data_pie <- data_pie[data_pie$county == input$county,]
+      data_bar <- data_bar[data_pie$county == input$county,]
     }
     
-    data_plot <- data_pie %>%
+    data_plot <- data_bar %>%
       filter(year == input$range[2]) %>%
       summarise(
         Murder = ifelse(
@@ -378,7 +378,7 @@ server <- function (input, output, session) {
           sum(robbery, na.rm = TRUE),
           apply_rate(sum(robbery, na.rm = TRUE), sum(population))
         ),
-        Assault = ifelse(
+        Aggravated_assault = ifelse(
           input$format == "Count",
           sum(assault, na.rm = TRUE),
           apply_rate(sum(assault, na.rm = TRUE), sum(population))
@@ -388,12 +388,12 @@ server <- function (input, output, session) {
           sum(burglary, na.rm = TRUE),
           apply_rate(sum(burglary, na.rm = TRUE), sum(population))
         ),
-        LarcenyTft = ifelse(
+        Larceny_theft = ifelse(
           input$format == "Count",
           sum(larcenytft, na.rm = TRUE),
           apply_rate(sum(larcenytft, na.rm = TRUE), sum(population))
         ),
-        MVTft = ifelse(
+        Moter_vehical_theft = ifelse(
           input$format == "Count",
           sum(mvtft, na.rm = TRUE),
           apply_rate(sum(mvtft, na.rm = TRUE), sum(population))
@@ -408,18 +408,19 @@ server <- function (input, output, session) {
     
     if (input$category == "Violent") {
       plot <- data_plot %>%
-        filter(category %in% c("Murder", "Rape", "Robbery", "Assult")) %>%
-        hchart("pie", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
+        filter(category %in% c("Murder", "Rape", "Robbery", "Aggravated_assault")) %>%
+        hchart("column", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
     } else if (input$category == "Property") {
       plot <- data_plot %>%
-        filter(category %in% c("Burglary", "LarcenyTft", "MVTft", "Arson")) %>%
-        hchart("pie", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
+        filter(category %in% c("Burglary", "Larceny_theft", "Moter_vehical_theft", "Arson")) %>%
+        hchart("column", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
     } else {
       plot <- data_plot %>%
-        hchart("pie", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
+        hchart("column", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
     }
     
     plot %>%
+      hc_yAxis(type = "logarithmic") %>%
       hc_add_theme(hc_theme_sandsignika())
   })
 
@@ -487,9 +488,9 @@ server <- function (input, output, session) {
     
     fill_color <- colorQuantile("YlOrRd", map_selected$data)
 
-    leaflet() %>%
+    leaflet(map_selected2) %>%
       addProviderTiles("CartoDB.Positron") %>%
-      setView(lng = -89.3, lat = 39.8, zoom = 6) %>%
+      setView(lng = -89.5, lat = 39.8, zoom = 6) %>%
       addPolygons(
         data = mymap,
         weight = 1.5,
@@ -498,7 +499,7 @@ server <- function (input, output, session) {
         fillColor = "lightgrey"
       ) %>%
       addPolygons(
-        data = map_selected2,
+        # data = map_selected2,
         weight = 1.5,
         color = "darkgrey",
         fillOpacity = 0.8,
@@ -520,6 +521,14 @@ server <- function (input, output, session) {
           color = "black",
           bringToFront = FALSE
         )
+      ) %>%
+      addLegend(
+        "bottomleft",
+        title = "Quantiles",
+        pal = fill_color,
+        values = ~data,
+        na.label = "No data",
+        opacity = .8
       )
   })
 

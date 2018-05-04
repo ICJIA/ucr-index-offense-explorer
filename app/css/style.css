@@ -90,6 +90,10 @@ button#toggleSidebar:hover {
 }
 
 
+.info {
+  font-size: 10px !important;
+}
+
 .container-title {
   display: flex;
   margin-bottom: 20px;
