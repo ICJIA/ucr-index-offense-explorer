@@ -6,7 +6,7 @@
 :root {
   --color-button: #337ab7;
   --color-footer: #1f3641;
-  --color-kpi: #f28869;
+  --color-kpi: #466c8c;
   --color-social: #466c8c;
 }
 */
@@ -21,7 +21,6 @@ html, body {
 body {
   font-family: 'Gentium Book Basic', serif;
   font-size: 16px;
-  
 }
 
 h1,
@@ -41,6 +40,10 @@ ul {
   margin-top: 10px;
 }
 
+hr {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 
 #title {
   display: flex;
@@ -89,7 +92,6 @@ button#toggleSidebar:hover {
   color: #aaa;
 }
 
-
 .info {
   font-size: 10px !important;
 }
@@ -108,10 +110,9 @@ button#toggleSidebar:hover {
   margin: 0;
 }
 
-
 .row {
   flex: 1 0 auto;
-  margin: 0 auto 20px auto;
+  margin: 10px auto 20px auto;
   width: 100%;
   max-width: 1280px;
 }
@@ -131,7 +132,7 @@ button#toggleSidebar:hover {
   border: 1px solid lightgrey;
   border-radius: 5px;
   color: white;
-  background: #f28869;
+  background: #466c8c;
   text-align: center;
 }
 
@@ -187,6 +188,7 @@ button#toggleSidebar:hover {
   
   .kpis {
     flex-direction: row;
+    margin-bottom: 10px;
   }
   
   .kpi {

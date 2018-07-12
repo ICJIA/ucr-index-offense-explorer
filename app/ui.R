@@ -12,6 +12,7 @@ options(shiny.sanitize.errors = FALSE)
 
 # import packages
 library(shiny)
+library(shinyBS)
 library(shinyjs)
 library(DT)
 library(leaflet)
@@ -26,6 +27,10 @@ load("data/data.rda")
 
 # custom js code
 jscode <- "shinyjs.toggleSidebar = function() { $('div.col-sm-3').has('form').toggle(); $(window).resize(); }"
+
+
+# rural labels
+rural_labels <- c("Completely Rural", "Mostly Rural", "Mostly Urban", "Completely Urban")
 
 
 # DEFINE UI #
@@ -53,7 +58,7 @@ ui <- shinyUI(fluidPage(
           10,
           style="display:flex; align-items: center;",
           actionButton("toggleSidebar", icon("bars")),
-          span(id = "text-identity", "Uniform Crime Report Data Dashboard")
+          span(id = "text-identity", "Uniform Crime Report Data Explorer")
         ),
         column(
           2,
@@ -102,12 +107,20 @@ ui <- shinyUI(fluidPage(
         choices = c("All", sort(unique(as.character(mydata$region)))),
         selected = "All"
       ),
-      # selectInput(
-      #   "circuit",
-      #   "Select judicial circuit",
-      #   choices = c("All", sort(unique(as.character(mydata$circuit)))),
-      #   selected = "All"
-      # ),
+      selectInput(
+        "rural",
+        span("Select community type*", id="rural-text"),
+        choices = c("All", rural_labels),
+        selected = "All"
+      ),
+      bsPopover(
+        id = "rural-text",
+        title = "What is community type?",
+        content = "The community type of a county is based on the definition of \"rural\" by the U.S. Census Bureau (Ratcliffe et al. 2016). The original categorization consists of three categories: (1) completely rural, (2) mostly rural, and (3) mostly urban. The UCR Data Explorer has the fourth category, completely urban, for counties consisting fully of urban areas as defined by the Bureau.",
+        placement = "right",
+        trigger = "hover",
+        options = list(container = 'body')
+      ),
       selectInput(
         "county",
         "Select county",
@@ -117,6 +130,13 @@ ui <- shinyUI(fluidPage(
       p(
         downloadButton("downloadData","Download"), style="text-align:center;",
         actionButton("reset", "Reset"), style="text-align:center;"
+      ),
+      br(),
+      p(
+        strong("References:"),
+        br(),
+        "(1) Hughes, Erika. (2016).", a("About Uniform Crime Reporting Program data.", href="http://www.icjia.state.il.us/articles/about-uniform-crime-reporting-program-data", target="_blank"),
+        "(2) Ratcliffe, M, Burd, C., Holder, K, & Fields A. (2016).", a("Defining Rural at the U.S. Census Bureau: American Community Survey and Geography Brief.", href="https://www2.census.gov/geo/pdfs/reference/ua/Defining_Rural.pdf", target="_blank")
       )
     ),
     
@@ -130,15 +150,15 @@ ui <- shinyUI(fluidPage(
         column(
           12,
           h1(textOutput("current"), style="margin:0 0 10px 0; display:inline-block;"),
-          p("This dashboard offers an interactive way to explore the",
+          p("Uniform Crime Report Data Explorer offers an interactive interface to the",
             em("Crime in Illinois Annual Uniform Crime Report (UCR)"),
-            "data (1982-2015), originally provided by Illinois State Police and",
-            "prepared by ICJIA.",
-            "All datasets used in this dashboard are freely available at",
+            paste0("data (", min(mydata$year), "-", max(mydata$year), ") "),
+            "originally published by Illinois State Police.",
+            "All data used in the Data Explorer are freely available at",
             a("the ICJIA website.", href="http://www.icjia.state.il.us/research/overview#tab_research-data", target="_blank"),
-            "To learn more about the UCR data, read",
+            "To learn more about the UCR data, refer to",
             a("this article", href="http://www.icjia.state.il.us/articles/about-uniform-crime-reporting-program-data", target="_blank"),
-            "by ICJIA staff."
+            "by ICJIA staff (Hughes, 2016)."
           ),
           p(
             "Use the filters on the side menu to explore and analyze patterns in criminal offenses.",
