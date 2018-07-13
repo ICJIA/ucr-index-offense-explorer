@@ -37,6 +37,10 @@ hcoptslang$thousandsSep <- ","
 options(highcharter.lang = hcoptslang)
 
 
+# rural labels
+rural_labels <- c("Completely Rural", "Mostly Rural", "Mostly Urban", "Completely Urban")
+
+
 # DEFINE SERVER LOGIC #
 #-------------------------------------------------------------------------------
 server <- function (input, output, session) {
@@ -49,10 +53,10 @@ server <- function (input, output, session) {
 
   # data output-----------------------------------------------------------------
   data_output <- mydata %>%
-    select(1:5, violent = violent_crime, property = property_crime)
+    select(year:population, violent = violent_crime, property = property_crime)
   
   # reset filtering
-  observeEvent(input$reset,{
+  observeEvent(input$reset, {
     updateRadioButtons(
       session,
       inputId  = "format",
@@ -80,6 +84,13 @@ server <- function (input, output, session) {
     
     updateSelectInput(
       session,
+      inputId  = "rural",
+      choices  = c("All", rural_labels),
+      selected = "All"
+    )
+    
+    updateSelectInput(
+      session,
       inputId  = "county",
       choices  = c("All", sort(unique(as.character(data_output$county)))),
       selected = "All"
@@ -88,20 +99,76 @@ server <- function (input, output, session) {
   
   
   # filtering data--------------------------------------------------------------
-  observeEvent(c(input$region, input$circuit), {
-    if (input$region != "All") {
-      data_use <- data_output %>%
-        filter(region == input$region)
-    } else {
-      data_use <- data_output
-    }
+  observeEvent(input$region, {
     
-    updateSelectInput(
-      session,
-      inputId  = "county",
-      choices  = c("All", sort(unique(as.character(data_use$county)))),
-      selected = "All"
-    )
+    if (input$region == "All") {
+      updateSelectInput(
+        session,
+        inputId  = "region",
+        choices  = c("All", sort(unique(as.character(data_output$region)))),
+        selected = "All"
+      )
+      
+      updateSelectInput(
+        session,
+        inputId  = "rural",
+        choices  = c("All", intersect(rural_labels, data_output$rural)),
+        selected = "All"
+      )
+      
+      updateSelectInput(
+        session,
+        inputId  = "county",
+        choices  = c("All", sort(unique(as.character(data_output$county)))),
+        selected = "All"
+      )
+    } else {
+      data_update <- mydata %>%
+        filter(region == input$region)
+      
+      updateSelectInput(
+        session,
+        inputId = "rural",
+        choices = c("All", intersect(rural_labels, data_update$rural))
+      )
+      
+      updateSelectInput(
+        session,
+        inputId = "county",
+        choices = c("All", sort(unique(as.character(data_update$county))))
+      )
+    }
+  })
+  
+  observeEvent(input$rural, {
+    
+    if (input$rural == "All") {
+      updateSelectInput(
+        session,
+        inputId  = "county",
+        selected = "All"
+      )
+    } else {
+      data_update <- mydata %>%
+        filter(rural == input$rural)
+      
+      updateSelectInput(
+        session,
+        inputId = "county",
+        choices = c("All", sort(unique(as.character(data_update$county))))
+      )
+      
+      if (input$region != "All") {
+        data_update <- data_update %>%
+          filter(region == input$region)
+        
+        updateSelectInput(
+          session,
+          inputId = "county",
+          choices = c("All", sort(unique(as.character(data_update$county))))
+        )
+      }
+    }
   })
   
  
@@ -112,13 +179,14 @@ server <- function (input, output, session) {
     
     if (input$region != "All") {
       data_download <- filter(data_download, region == input$region)
-    } else if (input$circuit != "All") {
-      data_download <- filter(data_download, circuit == input$circuit)
     }
-    
+    if (input$rural != "All") {
+      data_download <- filter(data_download, type == input$rural)
+    }
     if (input$county != "All") {
       data_download <- filter(data_download, county == input$county)
     }
+    na.omit(data_download)
   })
   
   output$downloadData <- downloadHandler(
@@ -133,20 +201,28 @@ server <- function (input, output, session) {
     
   # Text on the top-------------------------------------------------------------
   output$current <- renderText({
-    text_output <- "Illinois"
+    text_output <- "Illinois State"
     
     if (input$region != "All") {
-      text_output <- paste(input$region, "region")
+      text_output <- paste(input$region, "Region")
+      if (input$rural != "All") {
+        text_output <- paste(text_output, input$rural, sep = ", ")
+      }
       if (input$region == "Cook") {
-        text_output = paste("Cook county")
+        text_output = paste(input$region, "County")
+      }
+    } else if (input$rural != "All") {
+      text_output <- input$rural
+      if (input$county != "All") {
+        text_output <- paste(input$county, "County")
       }
     }
 
     if(input$county != "All"){
-      text_output <- paste(input$county, "county")
+      text_output <- paste(input$county, "County")
     }
     
-    paste("Crime Data Profile:", text_output, sep=" ")
+    paste("UCR Profile:", text_output, sep=" ")
   })
   
   
@@ -157,6 +233,9 @@ server <- function (input, output, session) {
     
     if (input$region != "All") {
       data_output <- data_output[data_output$region == input$region, ]
+    }
+    if (input$rural != "All") {
+      data_output <- data_output[data_output$rural == input$rural, ]
     }
     if (input$county != "All") {
       data_output <- data_output[data_output$county == input$county, ]
@@ -183,7 +262,7 @@ server <- function (input, output, session) {
     tagList(
       tags$h1(value),
       tags$p(
-        span(icon("bar-chart"), style="color:yellow;"),
+        icon("bar-chart"),
         desc,
         style="font-size:1.1em;"
       )
@@ -193,6 +272,9 @@ server <- function (input, output, session) {
   output$kpi_box_2 <- renderUI({
     if (input$region != "All") {
       data_output <- data_output[data_output$region == input$region, ]
+    }
+    if (input$rural != "All") {
+      data_output <- data_output[data_output$rural == input$rural, ]
     }
     if (input$county != "All") {
       data_output <- data_output[data_output$county == input$county, ]
@@ -226,7 +308,7 @@ server <- function (input, output, session) {
     tagList(
       tags$h1(value),
       tags$p(
-        span(icon("percent"), style="color:#337ab7;"),
+        icon("percent"),
         paste0("Change, ", input$range[2] - 1, "-", input$range[2]),
         style="font-size:1.1em;"
       )
@@ -236,6 +318,9 @@ server <- function (input, output, session) {
   output$kpi_box_3 <- renderUI({
     if (input$region != "All") {
       data_output <- data_output[data_output$region == input$region, ]
+    }
+    if (input$rural != "All") {
+      data_output <- data_output[data_output$rural == input$rural, ]
     }
     if (input$county != "All") {
       data_output <- data_output[data_output$county == input$county, ]
@@ -269,7 +354,7 @@ server <- function (input, output, session) {
     tagList(
       tags$h1(value),
       tags$p(
-        span(icon("percent"), style="color:#337ab7;"),
+        icon("percent"),
         paste0("Change, ", input$range[1], "-", input$range[2]),
         style="font-size:1.1em;"
       )
@@ -279,7 +364,7 @@ server <- function (input, output, session) {
 
   # historical trend line chart-------------------------------------------------
   output$line_title <- renderText({
-    text_output <- "Historical Trend"
+    text_output <- paste0("Trend (", input$range[1], "-", input$range[2], ")")
     
     if (input$category != "All"){
       paste(text_output, input$category, sep=": ")
@@ -294,6 +379,9 @@ server <- function (input, output, session) {
     
     if(input$region != "All"){
       data_line <- data_line[data_line$region == input$region, ]
+    }
+    if (input$rural != "All") {
+      data_line <- data_line[data_line$rural == input$rural,]
     }
     if(input$county != "All"){
       data_line <- data_line[data_line$county == input$county, ]
@@ -312,19 +400,31 @@ server <- function (input, output, session) {
           sum(property, na.rm = TRUE),
           apply_rate(sum(property, na.rm = TRUE), sum(population))
         )
-      ) %>%
-      gather(
-        Violent, Property,
-        key = "category",
-        value = "count"
       )
     
-    if (input$category != "All") {
-      plot <- filter(data_plot, category == input$category) %>%
-        hchart("line", hcaes(x = year, y = count, group = category, name = category))
+    plot <- highchart() %>% 
+      hc_xAxis(categories = data_plot$year)
+    
+    if (input$category == "All") {
+      plot <- plot %>% 
+        hc_add_series(
+          name = "Violent",
+          data = data_plot$Violent,
+          color = "#f45b5b"
+        ) %>% 
+        hc_add_series(
+          name = "Property",
+          data = data_plot$Property,
+          color = "#8085e9"
+        )
     } else {
-      plot <- data_plot %>%
-        hchart("line", hcaes(x = year, y = count, group = category, name = category))
+      hc_color <- ifelse(input$category == "Violent", "#f45b5b", "#8085e9")
+      plot <- plot %>%
+        hc_add_series(
+          name = input$category,
+          data = data_plot[[input$category]],
+          color = hc_color
+        )
     }
     
     if (input$format == "Count") {
@@ -339,9 +439,9 @@ server <- function (input, output, session) {
   })
 
   
-  # Offense type pie chart------------------------------------------------------
-  output$pie_title <- renderText({
-    text_output <- paste0("Offense Type (", input$range[2],")")
+  # Offense type bar chart------------------------------------------------------
+  output$bar_title <- renderText({
+    text_output <- paste0("Offense Type (", input$range[2], ")", "*")
     
     if(input$category != "All"){
       paste(text_output, input$category, sep = ": ")
@@ -350,17 +450,20 @@ server <- function (input, output, session) {
     }
   })
   
-  output$pie <- renderHighchart({
-    data_pie <- mydata
+  output$bar <- renderHighchart({
+    data_bar <- mydata
     
     if (input$region != "All") {
-      data_pie <- data_pie[data_pie$region == input$region,]
+      data_bar <- data_bar[data_bar$region == input$region,]
+    }
+    if (input$rural != "All") {
+      data_bar <- data_bar[data_bar$rural == input$rural,]
     }
     if (input$county != "All") {
-      data_pie <- data_pie[data_pie$county == input$county,]
+      data_bar <- data_bar[data_bar$county == input$county,]
     }
     
-    data_plot <- data_pie %>%
+    data_plot <- data_bar %>%
       filter(year == input$range[2]) %>%
       summarise(
         Murder = ifelse(
@@ -378,7 +481,7 @@ server <- function (input, output, session) {
           sum(robbery, na.rm = TRUE),
           apply_rate(sum(robbery, na.rm = TRUE), sum(population))
         ),
-        Assault = ifelse(
+        `Aggravated assault` = ifelse(
           input$format == "Count",
           sum(assault, na.rm = TRUE),
           apply_rate(sum(assault, na.rm = TRUE), sum(population))
@@ -388,12 +491,12 @@ server <- function (input, output, session) {
           sum(burglary, na.rm = TRUE),
           apply_rate(sum(burglary, na.rm = TRUE), sum(population))
         ),
-        LarcenyTft = ifelse(
+        `Larceny theft` = ifelse(
           input$format == "Count",
           sum(larcenytft, na.rm = TRUE),
           apply_rate(sum(larcenytft, na.rm = TRUE), sum(population))
         ),
-        MVTft = ifelse(
+        `Moter vehical theft` = ifelse(
           input$format == "Count",
           sum(mvtft, na.rm = TRUE),
           apply_rate(sum(mvtft, na.rm = TRUE), sum(population))
@@ -403,30 +506,69 @@ server <- function (input, output, session) {
           sum(arson, na.rm = TRUE),
           apply_rate(sum(arson, na.rm = TRUE), sum(population))
         )
-      ) %>%
-      gather(Murder:Arson, key="category", value="count")
+      )
     
     if (input$category == "Violent") {
-      plot <- data_plot %>%
-        filter(category %in% c("Murder", "Rape", "Robbery", "Assult")) %>%
-        hchart("pie", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
+      data_plot_viol <-
+        data_plot %>%
+        select(Murder:`Aggravated assault`) %>%
+        gather(Murder:`Aggravated assault`, key="category", value="count") %>%
+        mutate(type = "Violent")
+      
+      plot <-
+        hchart(
+          data_plot_viol,
+          type = "column",
+          mapping = hcaes(x = category, y = count),
+          name = ifelse(input$format == "Count", "Count", "Rate"),
+          color = "#f45b5b"
+        )
     } else if (input$category == "Property") {
-      plot <- data_plot %>%
-        filter(category %in% c("Burglary", "LarcenyTft", "MVTft", "Arson")) %>%
-        hchart("pie", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
+      data_plot_prop <-
+        data_plot %>%
+        select(Burglary:Arson) %>%
+        gather(Burglary:Arson, key="category", value="count") %>%
+        mutate(type = "Property")
+      
+      plot <-
+        hchart(
+          data_plot_prop,
+          type = "column",
+          mapping = hcaes(x = category, y = count),
+          name = ifelse(input$format == "Count", "Count", "Rate"),
+          color = "#8085e9"
+        )
     } else {
-      plot <- data_plot %>%
-        hchart("pie", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
+      data_plot_all <-
+        rbind(
+          data_plot %>%
+            select(Murder:`Aggravated assault`) %>%
+            gather(Murder:`Aggravated assault`, key="category", value="count") %>%
+            mutate(type = "Violent"),
+          data_plot %>%
+            select(Burglary:Arson) %>%
+            gather(Burglary:Arson, key="category", value="count") %>%
+            mutate(type = "Property")
+        )
+      
+      plot <-
+        hchart(
+          data_plot_all,
+          type = "column",
+          mapping = hcaes(x = category, y = count, group = factor(type, levels = c("Violent", "Property")))
+        )
     }
     
     plot %>%
+      hc_xAxis(title = "") %>%
+      hc_yAxis(type = "logarithmic") %>%
       hc_add_theme(hc_theme_sandsignika())
   })
 
   
   # Distribution map------------------------------------------------------------
   output$map_title <- renderText({
-    text_output <- paste0("Distribution (", input$range[2],")")
+    text_output <- paste0("Geography (", input$range[2], ")", "*")
     
     if(input$category != "All"){
       paste(text_output, input$category, sep=": ")
@@ -481,26 +623,33 @@ server <- function (input, output, session) {
         map_selected2 <- map_selected2[map_selected2$region == input$region, ]
       }
     }
+    if (input$rural != "All") {
+      map_selected2 <- map_selected2[map_selected2$rural == input$rural, ]
+    }
     if (input$county != "All") {
       map_selected2 <- map_selected2[map_selected2$name == input$county, ]
     }
     
-    fill_color <- colorQuantile("YlOrRd", map_selected$data)
+    fill_palette <- ifelse(
+      input$category == "Violent", "Reds", ifelse(
+        input$category == "Property", "Purples", "RdPu"
+      )
+    )
+    fill_color <- colorQuantile(fill_palette, map_selected$data)
 
-    leaflet() %>%
+    leaflet(map_selected2) %>%
       addProviderTiles("CartoDB.Positron") %>%
-      setView(lng = -89.3, lat = 39.8, zoom = 6) %>%
+      setView(lng = -89.5, lat = 39.8, zoom = 6) %>%
       addPolygons(
         data = mymap,
-        weight = 1.5,
-        color = "darkgrey",
+        weight = 1.1,
+        color = "darkgray",
         fillOpacity = 0.2,
         fillColor = "lightgrey"
       ) %>%
       addPolygons(
-        data = map_selected2,
-        weight = 1.5,
-        color = "darkgrey",
+        weight = 1.3,
+        color = "#333",
         fillOpacity = 0.8,
         fillColor = ~fill_color(data),
         label = ~paste0(
@@ -520,9 +669,18 @@ server <- function (input, output, session) {
           color = "black",
           bringToFront = FALSE
         )
+      ) %>%
+      addLegend(
+        "bottomleft",
+        title = "Quantiles",
+        pal = fill_color,
+        values = ~data,
+        na.label = "No data",
+        opacity = .8
       )
   })
 
+  
   # data table------------------------------------------------------------------
   output$dataTable <- renderDataTable({
     data_table <- data_output %>%
@@ -530,6 +688,9 @@ server <- function (input, output, session) {
 
     if(input$region != "All"){
       data_table <- data_output[data_table$region == input$region, ]
+    }
+    if(input$rural != "All"){
+      data_table <- data_output[data_table$rural == input$rural, ]
     }
     if(input$county != "All"){
       data_table <- data_output[data_table$county == input$county, ]
