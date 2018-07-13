@@ -26,7 +26,7 @@ load("data/data.rda")
 
 
 # custom js code
-jscode <- "shinyjs.toggleSidebar = function() { $('div.col-sm-3').has('form').toggle(); $(window).resize(); }"
+jscode <- "shinyjs.toggleSidebar = function() { $('div.col-sm-3').has('form').toggle(); $(window).resize(); };"
 
 
 # rural labels
@@ -47,7 +47,7 @@ ui <- shinyUI(fluidPage(
   useShinyjs(),
   # extendShinyjs(text = jscode),
   extendShinyjs(text = jscode, functions = "toggleSidebar"), # for shinyappsio
-  
+
   # TITLE
   titlePanel(
     div(
@@ -116,7 +116,7 @@ ui <- shinyUI(fluidPage(
       bsPopover(
         id = "rural-text",
         title = "What is community type?",
-        content = "The community type of a county is based on the definition of \"rural\" by the U.S. Census Bureau (Ratcliffe et al. 2016). The original categorization consists of three categories: (1) completely rural, (2) mostly rural, and (3) mostly urban. The UCR Data Explorer has the fourth category, completely urban, for counties consisting fully of urban areas as defined by the Bureau.",
+        content = "The community type of a county is based on the definition of \"rural\" by the U.S. Census Bureau (Ratcliffe et al. 2016). The original categorization consists of three categories: (1) completely rural, (2) mostly rural, and (3) mostly urban. The UCR Data Explorer has added the fourth category, completely urban, for counties consisting fully of urban areas as defined by the Bureau. Please note that the categorization in this Explorer is based on the latest Census data (2010) and may diverge from the true status of each county for other years.",
         placement = "right",
         trigger = "hover",
         options = list(container = 'body')
@@ -135,8 +135,11 @@ ui <- shinyUI(fluidPage(
       p(
         strong("References:"),
         br(),
-        "(1) Hughes, Erika. (2016).", a("About Uniform Crime Reporting Program data.", href="http://www.icjia.state.il.us/articles/about-uniform-crime-reporting-program-data", target="_blank"),
-        "(2) Ratcliffe, M, Burd, C., Holder, K, & Fields A. (2016).", a("Defining Rural at the U.S. Census Bureau: American Community Survey and Geography Brief.", href="https://www2.census.gov/geo/pdfs/reference/ua/Defining_Rural.pdf", target="_blank")
+        "(1) Hughes, Erika. (2016).",
+        a(strong("About Uniform Crime Reporting Program data."), href="http://www.icjia.state.il.us/articles/about-uniform-crime-reporting-program-data", target="_blank"),
+        br(),
+        "(2) Ratcliffe, M, Burd, C., Holder, K, & Fields A. (2016).",
+        a(strong("Defining Rural at the U.S. Census Bureau: American Community Survey and Geography Brief."), href="https://www2.census.gov/geo/pdfs/reference/ua/Defining_Rural.pdf", target="_blank")
       )
     ),
     
@@ -150,18 +153,20 @@ ui <- shinyUI(fluidPage(
         column(
           12,
           h1(textOutput("current"), style="margin:0 0 10px 0; display:inline-block;"),
-          p("Uniform Crime Report Data Explorer offers an interactive interface to the",
+          p(strong("Uniform Crime Report Data Explorer"),
+            "offers an interactive interface to the",
             em("Crime in Illinois Annual Uniform Crime Report (UCR)"),
             paste0("data (", min(mydata$year), "-", max(mydata$year), ") "),
             "originally published by Illinois State Police.",
             "All data used in the Data Explorer are freely available at",
-            a("the ICJIA website.", href="http://www.icjia.state.il.us/research/overview#tab_research-data", target="_blank"),
+            a(strong("the ICJIA website."), href="http://www.icjia.state.il.us/research/overview#tab_research-data", target="_blank"),
             "To learn more about the UCR data, refer to",
-            a("this article", href="http://www.icjia.state.il.us/articles/about-uniform-crime-reporting-program-data", target="_blank"),
+            a(strong("this article"), href="http://www.icjia.state.il.us/articles/about-uniform-crime-reporting-program-data", target="_blank"),
             "by ICJIA staff (Hughes, 2016)."
           ),
           p(
-            "Use the filters on the side menu to explore and analyze patterns in criminal offenses.",
+            strong("Use the filters on the side menu"),
+            "to explore and analyze patterns in criminal offenses.",
             "You can toggle the side menu using the menu button on the top left.",
             "Also, clicking the \"Download\" button on the side menu will download the filtered data."
           )
@@ -180,9 +185,26 @@ ui <- shinyUI(fluidPage(
       fluidRow(
         class = "plots",
         column(4, class = "plot_line", h3(textOutput("line_title")), withSpinner(highchartOutput("line"), type = 4)),
-        column(4, class = "plot_bar", h3(textOutput("bar_title")), withSpinner(highchartOutput("bar"), type = 4)),
-        column(4, class = "plot_map", h3(textOutput("map_title")), withSpinner(leafletOutput("map"), type = 4))
+        column(4, class = "plot_bar", h3(textOutput("bar_title"), id="bar-title-text"), withSpinner(highchartOutput("bar"), type = 4)),
+        column(4, class = "plot_map", h3(textOutput("map_title"), id="map-title-text"), withSpinner(leafletOutput("map"), type = 4)),
+        bsPopover(
+          id = "bar-title-text",
+          title = "Bar chart scale",
+          content = "Please note that the y-axis of this chart is on the log-scale for visibility reasons.",
+          placement = "top",
+          trigger = "hover",
+          options = list(container = 'body')
+        ),
+        bsPopover(
+          id = "map-title-text",
+          title = "What is this map?",
+          content = "The map shows the geographical distribution of offenses in the most recent year for your selected interval. The coloring scheme for this map is based on quantiles, as shown in the legend. Please note that the legend is dynamically adjusted to your selection of area while the color of each county is based on the state-wide quantiles and therefore remains fixed.",
+          placement = "top",
+          trigger = "hover",
+          options = list(container = 'body')
+        )
       ),
+      
       
       fluidRow(
         id="data-table",

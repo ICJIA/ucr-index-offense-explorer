@@ -407,11 +407,24 @@ server <- function (input, output, session) {
     
     if (input$category == "All") {
       plot <- plot %>% 
-        hc_add_series(name = "Violent", data = data_plot$Violent) %>% 
-        hc_add_series(name = "Property", data = data_plot$Property)
+        hc_add_series(
+          name = "Violent",
+          data = data_plot$Violent,
+          color = "#f45b5b"
+        ) %>% 
+        hc_add_series(
+          name = "Property",
+          data = data_plot$Property,
+          color = "#8085e9"
+        )
     } else {
+      hc_color <- ifelse(input$category == "Violent", "#f45b5b", "#8085e9")
       plot <- plot %>%
-        hc_add_series(name = input$category, data = data_plot[[input$category]])
+        hc_add_series(
+          name = input$category,
+          data = data_plot[[input$category]],
+          color = hc_color
+        )
     }
     
     if (input$format == "Count") {
@@ -428,7 +441,7 @@ server <- function (input, output, session) {
   
   # Offense type bar chart------------------------------------------------------
   output$bar_title <- renderText({
-    text_output <- paste0("Offense Type (", input$range[2],")")
+    text_output <- paste0("Offense Type (", input$range[2], ")", "*")
     
     if(input$category != "All"){
       paste(text_output, input$category, sep = ": ")
@@ -468,7 +481,7 @@ server <- function (input, output, session) {
           sum(robbery, na.rm = TRUE),
           apply_rate(sum(robbery, na.rm = TRUE), sum(population))
         ),
-        Aggravated_assault = ifelse(
+        `Aggravated assault` = ifelse(
           input$format == "Count",
           sum(assault, na.rm = TRUE),
           apply_rate(sum(assault, na.rm = TRUE), sum(population))
@@ -478,12 +491,12 @@ server <- function (input, output, session) {
           sum(burglary, na.rm = TRUE),
           apply_rate(sum(burglary, na.rm = TRUE), sum(population))
         ),
-        Larceny_theft = ifelse(
+        `Larceny theft` = ifelse(
           input$format == "Count",
           sum(larcenytft, na.rm = TRUE),
           apply_rate(sum(larcenytft, na.rm = TRUE), sum(population))
         ),
-        Moter_vehical_theft = ifelse(
+        `Moter vehical theft` = ifelse(
           input$format == "Count",
           sum(mvtft, na.rm = TRUE),
           apply_rate(sum(mvtft, na.rm = TRUE), sum(population))
@@ -493,23 +506,61 @@ server <- function (input, output, session) {
           sum(arson, na.rm = TRUE),
           apply_rate(sum(arson, na.rm = TRUE), sum(population))
         )
-      ) %>%
-      gather(Murder:Arson, key="category", value="count")
+      )
     
     if (input$category == "Violent") {
-      plot <- data_plot %>%
-        filter(category %in% c("Murder", "Rape", "Robbery", "Aggravated_assault")) %>%
-        hchart("column", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
+      data_plot_viol <-
+        data_plot %>%
+        select(Murder:`Aggravated assault`) %>%
+        gather(Murder:`Aggravated assault`, key="category", value="count") %>%
+        mutate(type = "Violent")
+      
+      plot <-
+        hchart(
+          data_plot_viol,
+          type = "column",
+          mapping = hcaes(x = category, y = count),
+          name = ifelse(input$format == "Count", "Count", "Rate"),
+          color = "#f45b5b"
+        )
     } else if (input$category == "Property") {
-      plot <- data_plot %>%
-        filter(category %in% c("Burglary", "Larceny_theft", "Moter_vehical_theft", "Arson")) %>%
-        hchart("column", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
+      data_plot_prop <-
+        data_plot %>%
+        select(Burglary:Arson) %>%
+        gather(Burglary:Arson, key="category", value="count") %>%
+        mutate(type = "Property")
+      
+      plot <-
+        hchart(
+          data_plot_prop,
+          type = "column",
+          mapping = hcaes(x = category, y = count),
+          name = ifelse(input$format == "Count", "Count", "Rate"),
+          color = "#8085e9"
+        )
     } else {
-      plot <- data_plot %>%
-        hchart("column", hcaes(x = category, y = count), name = ifelse(input$format == "Count", "Count", "Rate"))
+      data_plot_all <-
+        rbind(
+          data_plot %>%
+            select(Murder:`Aggravated assault`) %>%
+            gather(Murder:`Aggravated assault`, key="category", value="count") %>%
+            mutate(type = "Violent"),
+          data_plot %>%
+            select(Burglary:Arson) %>%
+            gather(Burglary:Arson, key="category", value="count") %>%
+            mutate(type = "Property")
+        )
+      
+      plot <-
+        hchart(
+          data_plot_all,
+          type = "column",
+          mapping = hcaes(x = category, y = count, group = factor(type, levels = c("Violent", "Property")))
+        )
     }
     
     plot %>%
+      hc_xAxis(title = "") %>%
       hc_yAxis(type = "logarithmic") %>%
       hc_add_theme(hc_theme_sandsignika())
   })
@@ -517,7 +568,7 @@ server <- function (input, output, session) {
   
   # Distribution map------------------------------------------------------------
   output$map_title <- renderText({
-    text_output <- paste0("Distribution (", input$range[2],")")
+    text_output <- paste0("Geography (", input$range[2], ")", "*")
     
     if(input$category != "All"){
       paste(text_output, input$category, sep=": ")
@@ -579,21 +630,26 @@ server <- function (input, output, session) {
       map_selected2 <- map_selected2[map_selected2$name == input$county, ]
     }
     
-    fill_color <- colorQuantile("YlOrRd", map_selected$data)
+    fill_palette <- ifelse(
+      input$category == "Violent", "Reds", ifelse(
+        input$category == "Property", "Purples", "RdPu"
+      )
+    )
+    fill_color <- colorQuantile(fill_palette, map_selected$data)
 
     leaflet(map_selected2) %>%
       addProviderTiles("CartoDB.Positron") %>%
       setView(lng = -89.5, lat = 39.8, zoom = 6) %>%
       addPolygons(
         data = mymap,
-        weight = 1.5,
-        color = "darkgrey",
+        weight = 1.1,
+        color = "darkgray",
         fillOpacity = 0.2,
         fillColor = "lightgrey"
       ) %>%
       addPolygons(
-        weight = 1.5,
-        color = "darkgrey",
+        weight = 1.3,
+        color = "#333",
         fillOpacity = 0.8,
         fillColor = ~fill_color(data),
         label = ~paste0(
