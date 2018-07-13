@@ -4,9 +4,10 @@
 
 /*
 :root {
+  --color-logo: #0e4473;
   --color-button: #337ab7;
   --color-footer: #1f3641;
-  --color-kpi: #f28869;
+  --color-kpi: #466c8c;
   --color-social: #466c8c;
 }
 */
@@ -21,7 +22,6 @@ html, body {
 body {
   font-family: 'Gentium Book Basic', serif;
   font-size: 16px;
-  
 }
 
 h1,
@@ -41,13 +41,17 @@ ul {
   margin-top: 10px;
 }
 
+hr {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 
 #title {
   display: flex;
   align-items: center;
   max-width: 1280px;
   margin: auto;
-  padding: 10px 0 20px 0;
+  padding: 10px 0 10px 0;
 }
 
 #logo {
@@ -55,6 +59,7 @@ ul {
 }
 
 #text-identity {
+  color: white;
   font-weight: 700;
   font-size: 14px;
   font-family: 'Lato';
@@ -66,8 +71,8 @@ ul {
 button#toggleSidebar {
   margin: 0;
   border: none;
-  color: #337ab7;
-  background-color: white;
+  color: white;
+  background-color: #0e4473;
 }
 
 button#toggleSidebar:hover {
@@ -89,11 +94,15 @@ button#toggleSidebar:hover {
   color: #aaa;
 }
 
+.info {
+  font-size: 10px !important;
+}
 
 .container-title {
   display: flex;
+  background-color: #0e4473;
   margin-bottom: 20px;
-  border-bottom: 1px solid #466c8c;
+  /*border-bottom: 1px solid #466c8c;*/
 }
 
 .container-fluid {
@@ -104,10 +113,9 @@ button#toggleSidebar:hover {
   margin: 0;
 }
 
-
 .row {
   flex: 1 0 auto;
-  margin: 0 auto 20px auto;
+  margin: 10px auto 20px auto;
   width: 100%;
   max-width: 1280px;
 }
@@ -127,7 +135,7 @@ button#toggleSidebar:hover {
   border: 1px solid lightgrey;
   border-radius: 5px;
   color: white;
-  background: #f28869;
+  background: #466c8c;
   text-align: center;
 }
 
@@ -162,6 +170,10 @@ button#toggleSidebar:hover {
   text-transform: uppercase;
 }
 
+.popover-title  {
+  font-size: 18px;
+}
+
 .footer {
   flex-shrink: 0;
   color: white;
@@ -183,6 +195,7 @@ button#toggleSidebar:hover {
   
   .kpis {
     flex-direction: row;
+    margin-bottom: 10px;
   }
   
   .kpi {
