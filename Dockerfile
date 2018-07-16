@@ -28,7 +28,9 @@ RUN apt-get update && apt-get install -y \
     libproj-dev
 
 # install R packages specfic to the app
-RUN R -e "install.packages(c('shinyjs', 'shinycssloaders', 'DT', 'rgdal', 'leaflet', 'highcharter', 'dplyr', 'tidyr'))"
+RUN R -e "install.packages(c('shinyjs', 'shinyBS', 'shinycssloaders', 'DT', 'leaflet', 'highcharter', 'dplyr', 'tidyr'))"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.2-20.tar.gz', repos=NULL, type='source')"
+
 
 # copy the app to the image
 RUN mkdir /root/app

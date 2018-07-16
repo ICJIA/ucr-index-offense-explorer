@@ -252,7 +252,7 @@ server <- function (input, output, session) {
     if(input$format == "Count") {
       desc <- paste0("Offenses in ", input$range[2])
       if (value > 10000) {
-        value <- paste(round(value / 1000), "K", sep = "")
+        value <- paste0(round(value / 1000), "K")
       }
     } else {
       desc <- paste0("Crime rate in ", input$range[2])
@@ -303,12 +303,12 @@ server <- function (input, output, session) {
       value_pre <- sum(data_pre$property, na.rm = TRUE)
     }
   
-    value <- round((value_max - value_pre) / value_pre * 100, 2)
+    value <- paste0(round((value_max - value_pre) / value_pre * 100, 1), "%")
       
     tagList(
       tags$h1(value),
       tags$p(
-        icon("percent"),
+        icon("sort"),
         paste0("Change, ", input$range[2] - 1, "-", input$range[2]),
         style="font-size:1.1em;"
       )
@@ -349,12 +349,12 @@ server <- function (input, output, session) {
       value_min <- sum(data_min$property, na.rm = TRUE)
     }
     
-    value <- round((value_max - value_min) / value_min * 100, 2)
+    value <- paste0(round((value_max - value_min) / value_min * 100, 1), "%")
     
     tagList(
       tags$h1(value),
       tags$p(
-        icon("percent"),
+        icon("sort"),
         paste0("Change, ", input$range[1], "-", input$range[2]),
         style="font-size:1.1em;"
       )
@@ -659,7 +659,7 @@ server <- function (input, output, session) {
           prettyNum(round(data, 2), big.mark=",")
         ),
         labelOptions = labelOptions(
-          offset = c(0, -45),
+          offset = c(0, -20),
           direction = "top",
           textsize = "12px",
           style = list("background" = "white")
