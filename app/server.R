@@ -201,7 +201,7 @@ server <- function (input, output, session) {
     
   # Text on the top-------------------------------------------------------------
   output$current <- renderText({
-    text_output <- "Illinois State"
+    text_output <- "Illinois"
     
     if (input$region != "All") {
       text_output <- paste(input$region, "Region")
