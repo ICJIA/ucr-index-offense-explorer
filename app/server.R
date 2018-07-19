@@ -201,7 +201,7 @@ server <- function (input, output, session) {
     
   # Text on the top-------------------------------------------------------------
   output$current <- renderText({
-    text_output <- "Illinois State"
+    text_output <- "Illinois"
     
     if (input$region != "All") {
       text_output <- paste(input$region, "Region")
@@ -424,18 +424,17 @@ server <- function (input, output, session) {
           name = input$category,
           data = data_plot[[input$category]],
           color = hc_color
-        )
+        ) %>%
+        hc_legend(enabled = FALSE)
     }
     
-    if (input$format == "Count") {
-      plot %>%
-        hc_yAxis(min = 0) %>%
-        hc_add_theme(hc_theme_sandsignika())  
-    } else {
-      plot %>%
-        hc_yAxis(title = list(text = "rate (per 100k)"), min = 0) %>%
-        hc_add_theme(hc_theme_sandsignika())  
-    }
+    plot %>%
+      hc_xAxis(title = "") %>%
+      hc_yAxis(
+        title = list(text = ifelse(input$format == "Count", "count", "rate (per 100k)")),
+        min = 0
+      ) %>%
+      hc_add_theme(hc_theme_sandsignika())
   })
 
   
@@ -508,60 +507,58 @@ server <- function (input, output, session) {
         )
       )
     
-    if (input$category == "Violent") {
-      data_plot_viol <-
-        data_plot %>%
-        select(Murder:`Aggravated assault`) %>%
-        gather(Murder:`Aggravated assault`, key="category", value="count") %>%
-        mutate(type = "Violent")
-      
-      plot <-
-        hchart(
-          data_plot_viol,
-          type = "column",
-          mapping = hcaes(x = category, y = count),
-          name = ifelse(input$format == "Count", "Count", "Rate"),
-          color = "#f45b5b"
-        )
-    } else if (input$category == "Property") {
-      data_plot_prop <-
-        data_plot %>%
-        select(Burglary:Arson) %>%
-        gather(Burglary:Arson, key="category", value="count") %>%
-        mutate(type = "Property")
-      
-      plot <-
-        hchart(
-          data_plot_prop,
-          type = "column",
-          mapping = hcaes(x = category, y = count),
-          name = ifelse(input$format == "Count", "Count", "Rate"),
-          color = "#8085e9"
-        )
-    } else {
-      data_plot_all <-
+    if (input$category == "All") {
+      data_plot2 <-
         rbind(
           data_plot %>%
             select(Murder:`Aggravated assault`) %>%
-            gather(Murder:`Aggravated assault`, key="category", value="count") %>%
+            gather(Murder:`Aggravated assault`, key = "category", value = "count") %>%
             mutate(type = "Violent"),
           data_plot %>%
             select(Burglary:Arson) %>%
-            gather(Burglary:Arson, key="category", value="count") %>%
+            gather(Burglary:Arson, key = "category", value = "count") %>%
             mutate(type = "Property")
         )
       
       plot <-
         hchart(
-          data_plot_all,
+          data_plot2,
           type = "column",
           mapping = hcaes(x = category, y = count, group = factor(type, levels = c("Violent", "Property")))
+        )
+    } else {
+      hc_color <- ifelse(input$category == "Violent", "#f45b5b", "#8085e9")
+      
+      if (input$category == "Violent") {
+        data_plot2 <-
+          data_plot %>%
+          select(Murder:`Aggravated assault`) %>%
+          gather(Murder:`Aggravated assault`, key = "category", value ="count") %>%
+          mutate(type = "Violent")  
+      } else {
+        data_plot2 <-
+          data_plot %>%
+          select(Burglary:Arson) %>%
+          gather(Burglary:Arson, key = "category", value = "count") %>%
+          mutate(type = "Property")
+      }
+      
+      plot <-
+        hchart(
+          data_plot2,
+          type = "column",
+          mapping = hcaes(x = category, y = count),
+          name = input$category,
+          color = hc_color
         )
     }
     
     plot %>%
       hc_xAxis(title = "") %>%
-      hc_yAxis(type = "logarithmic") %>%
+      hc_yAxis(
+        title = list(text = ifelse(input$format == "Count", "count", "rate (per 100k)")),
+        type = "logarithmic"
+      ) %>%
       hc_add_theme(hc_theme_sandsignika())
   })
 
