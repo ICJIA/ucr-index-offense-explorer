@@ -40,6 +40,7 @@ ui <- shinyUI(fluidPage(
   # HEAD
   tags$head(
     includeCSS(path = "css/style.css"),
+    includeHTML("google-analytics.html"),
     tags$title("Uniform Crime Report Data Dashboard")
   ),
   
