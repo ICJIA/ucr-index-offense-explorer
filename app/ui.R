@@ -40,6 +40,7 @@ ui <- shinyUI(fluidPage(
   # HEAD
   tags$head(
     includeCSS(path = "css/style.css"),
+    includeHTML("google-analytics.html"),
     tags$title("Uniform Crime Report Data Dashboard")
   ),
   
@@ -135,11 +136,13 @@ ui <- shinyUI(fluidPage(
       p(
         strong("References:"),
         br(),
-        "(1) Hughes, Erika. (2016).",
-        a(strong("About Uniform Crime Reporting Program data."), href="http://www.icjia.state.il.us/articles/about-uniform-crime-reporting-program-data", target="_blank"),
+        "(1) Hughes, E. (2016). ",
+        a(em("About Uniform Crime Reporting Program data."), href="http://www.icjia.state.il.us/articles/about-uniform-crime-reporting-program-data", target="_blank"),
+        " Chicago, IL: Illinois Criminal Justice Information Authority.",
         br(),
-        "(2) Ratcliffe, M, Burd, C., Holder, K, & Fields A. (2016).",
-        a(strong("Defining Rural at the U.S. Census Bureau: American Community Survey and Geography Brief."), href="https://www2.census.gov/geo/pdfs/reference/ua/Defining_Rural.pdf", target="_blank")
+        "(2) Ratcliff, M., Burd, C., Holder, K., & Fields, A. (2016). ",
+        a(em("Defining Rural at the U.S. Census Bureau: American Community Survey and geography Brief."), href="https://www2.census.gov/geo/pdfs/reference/ua/Defining_Rural.pdf", target="_blank"),
+        " Suitland, MD: U.S. Census Bureau."
       )
     ),
     
