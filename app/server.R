@@ -482,7 +482,7 @@ server <- function (input, output, session) {
         ),
         `Aggravated assault` = ifelse(
           input$format == "Count",
-          sum(assault, na.rm = TRUE),
+          sum(aggravated_assault, na.rm = TRUE),
           apply_rate(sum(assault, na.rm = TRUE), sum(population))
         ),
         Burglary = ifelse(
@@ -492,12 +492,12 @@ server <- function (input, output, session) {
         ),
         `Larceny theft` = ifelse(
           input$format == "Count",
-          sum(larcenytft, na.rm = TRUE),
+          sum(larceny_theft, na.rm = TRUE),
           apply_rate(sum(larcenytft, na.rm = TRUE), sum(population))
         ),
         `Moter vehical theft` = ifelse(
           input$format == "Count",
-          sum(mvtft, na.rm = TRUE),
+          sum(motor_vehicle_theft, na.rm = TRUE),
           apply_rate(sum(mvtft, na.rm = TRUE), sum(population))
         ),
         Arson = ifelse(
