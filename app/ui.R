@@ -1,36 +1,14 @@
 # Author: Bobae Kang (Bobae.Kang@illinois.gov)
 # Created: 2017-10-31
-# Last revised: 2018-04-20
+# Last revised: 2018-09-14
 # Script title: ui.R
 #-------------------------------------------------------------------------------
 
 
 # PREPARE FOR THE SESSION #
 #-------------------------------------------------------------------------------
-options(shiny.sanitize.errors = FALSE)
-
-
-# import packages
-library(shiny)
-library(shinyBS)
-library(shinyjs)
-library(DT)
-library(leaflet)
-library(highcharter)
-library(dplyr)
-library(shinycssloaders)
-
-
-# import data
-load("data/data.rda")
-
-
 # custom js code
 jscode <- "shinyjs.toggleSidebar = function() { $('div.col-sm-3').has('form').toggle(); $(window).resize(); };"
-
-
-# rural labels
-rural_labels <- c("Completely Rural", "Mostly Rural", "Mostly Urban", "Completely Urban")
 
 
 # DEFINE UI #
@@ -46,8 +24,7 @@ ui <- shinyUI(fluidPage(
   
   # SHINYJS
   useShinyjs(),
-  # extendShinyjs(text = jscode),
-  extendShinyjs(text = jscode, functions = "toggleSidebar"), # for shinyappsio
+  extendShinyjs(text = jscode, functions = "toggleSidebar"),
 
   # TITLE
   titlePanel(
