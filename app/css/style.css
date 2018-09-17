@@ -46,6 +46,11 @@ hr {
   margin-bottom: 10px;
 }
 
+a,
+a:-webkit-any-link {
+  text-decoration: none;
+}
+
 #title {
   display: flex;
   align-items: center;
