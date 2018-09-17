@@ -1,36 +1,29 @@
 # Author: Bobae Kang (Bobae.Kang@illinois.gov)
 # Created: 2017-10-31
-# Last revised: 2018-04-20
+# Last revised: 2018-09-14
 # Script title: ui.R
 #-------------------------------------------------------------------------------
 
 
 # PREPARE FOR THE SESSION #
 #-------------------------------------------------------------------------------
-options(shiny.sanitize.errors = FALSE)
+version <- "1.0.4"
 
+url <- list(
+  home        = "http://www.icjia.state.il.us/",
+  cj_dispatch = "http://visitor.r20.constantcontact.com/manage/optin?v=001MqUcqqvjwLCJXlLMSWbTe3zHHmEQgFeBuHvBcJWTbwgrxFbDSGx4HSUPpI6DJWMUPgbljtLxffqIcGFTgCnr-auak88ybvRxpoJlTMGPtZs%3D",
+  facebook    = "http://www.facebook.com/ICJIA",
+  twitter     = "http://www.twitter.com/ICJIA_Illinois",
+  youtube     = "https://www.youtube.com/channel/UCtZMzk8D3P4OixYTwsfPeKA",
+  soundcloud  = "https://www.soundcloud.com/icjia",
+  github      = "https://github.com/ICJIA"
+)
 
-# import packages
-library(shiny)
-library(shinyBS)
-library(shinyjs)
-library(DT)
-library(leaflet)
-library(highcharter)
-library(dplyr)
-library(shinycssloaders)
-
-
-# import data
-load("data/data.rda")
+icon_external_link <- tags$sup(style="color: grey;", icon("external-link", "fa"))
 
 
 # custom js code
 jscode <- "shinyjs.toggleSidebar = function() { $('div.col-sm-3').has('form').toggle(); $(window).resize(); };"
-
-
-# rural labels
-rural_labels <- c("Completely Rural", "Mostly Rural", "Mostly Urban", "Completely Urban")
 
 
 # DEFINE UI #
@@ -46,8 +39,7 @@ ui <- shinyUI(fluidPage(
   
   # SHINYJS
   useShinyjs(),
-  # extendShinyjs(text = jscode),
-  extendShinyjs(text = jscode, functions = "toggleSidebar"), # for shinyappsio
+  extendShinyjs(text = jscode, functions = "toggleSidebar"),
 
   # TITLE
   titlePanel(
@@ -65,7 +57,7 @@ ui <- shinyUI(fluidPage(
           2,
           a(
             img(id = "logo", src = "logo-icjia-small-blue-3.png"),
-            href = "http://www.icjia.state.il.us/",
+            href = url$home,
             target = "_blank",
             style = "text-decoration:none; float:right;"
           )
@@ -134,14 +126,33 @@ ui <- shinyUI(fluidPage(
       ),
       br(),
       p(
+        strong("Version:"),
+        a(
+          version,
+          icon("github", "fa-1x"),
+          href = paste0(url$github, "/ucr-data-explorer"),
+          target = "_blank"
+        )
+      ),
+      p(
         strong("References:"),
         br(),
         "(1) Hughes, E. (2016). ",
-        a(em("About Uniform Crime Reporting Program data."), href="http://www.icjia.state.il.us/articles/about-uniform-crime-reporting-program-data", target="_blank"),
+        a(
+          em("About Uniform Crime Reporting Program data."),
+          icon_external_link,
+          href = paste0(url$home, "articles/about-uniform-crime-reporting-program-data"),
+          target = "_blank"
+        ),
         " Chicago, IL: Illinois Criminal Justice Information Authority.",
         br(),
         "(2) Ratcliff, M., Burd, C., Holder, K., & Fields, A. (2016). ",
-        a(em("Defining Rural at the U.S. Census Bureau: American Community Survey and geography Brief."), href="https://www2.census.gov/geo/pdfs/reference/ua/Defining_Rural.pdf", target="_blank"),
+        a(
+          em("Defining Rural at the U.S. Census Bureau: American Community Survey and geography Brief."),
+          icon_external_link,
+          href="https://www2.census.gov/geo/pdfs/reference/ua/Defining_Rural.pdf",
+          target="_blank"
+        ),
         " Suitland, MD: U.S. Census Bureau."
       )
     ),
@@ -156,16 +167,28 @@ ui <- shinyUI(fluidPage(
         column(
           12,
           h1(textOutput("current"), style="margin:0 0 10px 0; display:inline-block;"),
-          p(strong("Uniform Crime Report Data Explorer"),
+          p(
+            strong("Uniform Crime Report Data Explorer"),
             "offers an interactive interface to the",
             em("Crime in Illinois Annual Uniform Crime Report (UCR)"),
             paste0("data (", min(mydata$year), "-", max(mydata$year), ") "),
             "originally published by Illinois State Police.",
-            "All data used in the Data Explorer are freely available at",
-            a(strong("the ICJIA website."), href="http://www.icjia.state.il.us/research/overview#tab_research-data", target="_blank"),
-            "To learn more about the UCR data, refer to",
-            a(strong("this article"), href="http://www.icjia.state.il.us/articles/about-uniform-crime-reporting-program-data", target="_blank"),
-            "by ICJIA staff (Hughes, 2016)."
+            "All data used in the Data Explorer are available at",
+            a(
+              strong("the ICJIA website"),
+              icon_external_link,
+              ".",
+              href = paste0(url$home, "research/overview#tab_research-data"),
+              target="_blank"
+            ),
+            "Learn more about the UCR data by reading",
+            a(
+              strong("this article"),
+              icon_external_link,
+              href = paste0(url$home, "articles/about-uniform-crime-reporting-program-data"),
+              target="_blank"
+            ),
+            " (Hughes, 2016)."
           ),
           p(
             strong("Use the filters on the side menu"),
@@ -233,7 +256,7 @@ ui <- shinyUI(fluidPage(
         ),
         a(
           "Subscribe Now",
-          href="http://visitor.r20.constantcontact.com/manage/optin?v=001MqUcqqvjwLCJXlLMSWbTe3zHHmEQgFeBuHvBcJWTbwgrxFbDSGx4HSUPpI6DJWMUPgbljtLxffqIcGFTgCnr-auak88ybvRxpoJlTMGPtZs%3D",
+          href= url$cj_dispatch,
           class="btn btn-default",
           style="font-family:'Gentium Book Basic'; font-size:16px;"
         ),
@@ -241,43 +264,43 @@ ui <- shinyUI(fluidPage(
           style = "margin-top: 15px;",
           a(
              icon("facebook-square", "fa-3x"),
-             href = "http://www.facebook.com/ICJIA",
+             href = url$facebook,
              target = "_blank",
              id = "social"
            ),
            a(
              icon("twitter-square", "fa-3x"),
-             href = "http://www.twitter.com/ICJIA_Illinois",
+             href = url$twitter,
              target = "_blank",
              id = "social"
            ),
            a(
              icon("youtube-square", "fa-3x"),
-             href = "https://www.youtube.com/channel/UCtZMzk8D3P4OixYTwsfPeKA",
+             href = url$youtube,
              target = "_blank",
              id = "social"
            ),
           a(
             icon("soundcloud", "fa-3x"),
-            href = "https://www.soundcloud.com/icjia",
+            href = url$soundcloud,
             target = "_blank",
             id = "social"
           ),
           a(
             icon("github", "fa-3x"),
-            href = "https://github.com/ICJIA",
+            href = url$github,
             target = "_blank",
             id = "social"
           ),
           a(
             icon("rss-square", "fa-3x"),
-            href = "https://www.icjia.state.il.us/feed",
+            href = paste0(url$home, "feed"),
             target = "_blank",
             id = "social"
           ),
           a(
             icon("envelope", "fa-3x"),
-            href = "https://www.icjia.state.il.us/about/contact",
+            href = paste0(url$home, "about/contact"),
             target = "_blank",
             id = "social"
           )
@@ -304,7 +327,7 @@ ui <- shinyUI(fluidPage(
           format(Sys.Date(), "%Y"),
            a(
              "Illinois Criminal Justice Information Authority",
-             href = "http://www.icjia.state.il.us/",
+             href = url$home,
              target = "_blank",
              id = "social",
              style = "margin:0;"
@@ -312,7 +335,7 @@ ui <- shinyUI(fluidPage(
           "  | ",
           a(
             "Privacy",
-            href = "http://www.icjia.state.il.us/about/privacy",
+            href = paste0(url$home, "about/privacy"),
             target = "_blank",
             id = "social",
             style = "margin:0;"
