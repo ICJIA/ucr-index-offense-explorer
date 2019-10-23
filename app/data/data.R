@@ -1,10 +1,10 @@
 library(dplyr)
 
 
-# generate mymap
-mymap <- rmapshaper::ms_simplify(icjiar::counties, keep = 0.005)
-mymap@data <-
-  mymap@data %>%
+# generate app_map
+app_map <- rmapshaper::ms_simplify(icjiar::counties, keep = 0.005)
+app_map@data <-
+  app_map@data %>%
   mutate(
     rural = case_when(
       rural_urban_2010 == 1 ~ "Completely Rural",
@@ -14,9 +14,9 @@ mymap@data <-
     )
   )
 
-# generate mydata
-mydata <- icjiar::crimes_isp %>%
-  left_join(select(mymap@data, county = name, region, rural)) %>%
+# generate app_data
+app_data <- icjiar::crimes_isp %>%
+  left_join(select(app_map@data, county = name, region, rural)) %>%
   left_join(select(icjiar::populations, -fips)) %>%
   select(
     year,
@@ -28,4 +28,4 @@ mydata <- icjiar::crimes_isp %>%
   )
 
 # save data for app
-save(mydata, mymap, file = "data.rda")
+save(app_data, app_map, file = "data.rda")
