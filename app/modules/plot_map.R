@@ -15,7 +15,7 @@ plot_map <- function(input, output) {
 
     if (input$category == "Property") {
       
-      if (input$format == "Count") {
+      if (input$unit == "Count") {
         my_attr <- mutate(data_map, data = property_crime)
       } else {
         my_attr <- mutate(data_map, data = apply_rate(property_crime, population))
@@ -24,7 +24,7 @@ plot_map <- function(input, output) {
 
     } else if (input$category == "Violent") {
 
-      if (input$format == "Count") {
+      if (input$unit == "Count") {
         my_attr <- mutate(data_map, data = violent_crime)
       } else {
         my_attr <- mutate(data_map, data = apply_rate(violent_crime, population))
@@ -36,7 +36,7 @@ plot_map <- function(input, output) {
         group_by(name = county) %>%
         summarise(
           data = ifelse(
-            input$format == "Count",
+            input$unit == "Count",
             sum(violent_crime, property_crime),
             apply_rate(sum(violent_crime, property_crime), sum(population))
           )
@@ -88,7 +88,7 @@ plot_map <- function(input, output) {
         fillColor   = ~fill_color(data),
         label       = ~paste0(
           as.character(name),
-          ifelse(input$format == "Count", " (count)", " (rate)"),
+          ifelse(input$unit == "Count", " (count)", " (rate)"),
           ": ",
           prettyNum(round(data, 2), big.mark=",")
         ),

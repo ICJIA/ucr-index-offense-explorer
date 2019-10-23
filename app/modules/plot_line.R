@@ -16,7 +16,7 @@ plot_line <- function(input, output, data) {
         vars(Violent = violent_crime, Property = property_crime),
         function(x) {
           ifelse(
-            input$format == "Count",
+            input$unit == "Count",
             sum(x, na.rm = TRUE),
             apply_rate(sum(x, na.rm = TRUE), sum(.$population))
           )
@@ -52,7 +52,7 @@ plot_line <- function(input, output, data) {
     plot %>%
       hc_xAxis(title = "") %>%
       hc_yAxis(
-        title = list(text = ifelse(input$format == "Count", "count", "rate (per 100k)")),
+        title = list(text = ifelse(input$unit == "Count", "count", "rate (per 100k)")),
         min = 0
       ) %>%
       hc_add_theme(hc_theme_sandsignika())

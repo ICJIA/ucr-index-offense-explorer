@@ -1,7 +1,7 @@
-input_format_ui <- function() {
+input_unit_ui <- function() {
   radioButtons(
-    "format",
-    "Select data format",
+    "unit",
+    "Select data unit",
     choices = c("Count", "Rate (per 100K)"),
     selected = "Count"
   )

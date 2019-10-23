@@ -39,7 +39,7 @@ ui <- shinyUI(fluidPage(
     sidebarPanel(
       id ="sidebar",
       width = 3,
-      input_format_ui(),
+      input_unit_ui(),
       input_category_ui(),
       input_range_ui(),
       input_region_ui(),

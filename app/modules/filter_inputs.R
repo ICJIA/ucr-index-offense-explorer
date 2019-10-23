@@ -2,7 +2,7 @@ filter_inputs <- function(input, session) {
   observeEvent(input$reset, {
     updateRadioButtons(
       session,
-      inputId = "format",
+      inputId = "unit",
       selected = "Count"
     )
 

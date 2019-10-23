@@ -28,7 +28,7 @@ plot_bar <- function(input, output, data) {
         vars(murder:aggravated_assault, burglary:arson),
         function(x) {
           ifelse(
-            input$format == "Count",
+            input$unit == "Count",
             sum(x, na.rm = TRUE),
             apply_rate(sum(x, na.rm = TRUE), sum(.$population))
           ) 
@@ -78,7 +78,7 @@ plot_bar <- function(input, output, data) {
     plot %>%
       hc_xAxis(title = "") %>%
       hc_yAxis(
-        title = list(text = ifelse(input$format == "Count", "count", "rate (per 100k)")),
+        title = list(text = ifelse(input$unit == "Count", "count", "rate (per 100k)")),
         type = "logarithmic"
       ) %>%
       hc_add_theme(hc_theme_sandsignika())

@@ -8,7 +8,7 @@ kpi_1 <- function(input, output, data) {
       value <- sum(data$violent_crime, data$property_crime, na.rm = TRUE)
     }
 
-    if(input$format == "Count") {
+    if(input$unit == "Count") {
       desc <- paste0("Offenses in ", input$range[2])
       if (value > 10000) {
         value <- paste0(round(value / 1000), "K")

@@ -21,7 +21,7 @@ filter_range <- function(data, input) {
 }
 
 select_data_unit <- function(data, input, ...) {
-  if (input$format == "Count") data
+  if (input$unit == "Count") data
   else mutate_at(data, vars(...), function(z) apply_rate(z, data$population))
 }
 
