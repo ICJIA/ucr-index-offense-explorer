@@ -43,7 +43,9 @@ plot_map <- function(input, output) {
         )
     }
 
-    map_selected@data <- map_selected@data %>%
+    map_selected@data <-
+      map_selected@data %>%
+      mutate(name = as.character(name)) %>%
       left_join(my_attr, by = "name")
     map_selected2 <- map_selected
 
