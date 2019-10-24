@@ -11,7 +11,7 @@ gather_selected <- function(x, type, ...) {
     )
 }
 
-plot_bar <- function(input, output, data) {
+plot_bar <- function(input, output, data_reactive) {
   output$bar_title <- renderText({
     text_output <- paste0("Offense Type (", input$range[2], ")", "*")
 
@@ -23,7 +23,8 @@ plot_bar <- function(input, output, data) {
   })
 
   output$bar <- renderHighchart({
-    data_bar <- data %>%
+    data_bar <-
+      data_reactive() %>%
       summarise_at(
         vars(murder:aggravated_assault, burglary:arson),
         function(x) {

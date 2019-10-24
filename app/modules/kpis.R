@@ -1,5 +1,7 @@
-kpi_1 <- function(input, output, data) {
+kpi_1 <- function(input, output, data_reactive) {
   output$kpi_1 <- renderUI({
+    data <- data_reactive()
+
     if (input$category == "Violent") {
       value <- sum(data$violent_crime, na.rm = TRUE)
     } else if (input$category == "Property") {
@@ -29,8 +31,10 @@ kpi_1 <- function(input, output, data) {
   })
 }
 
-kpi_2 <- function(input, output, data) {
+kpi_2 <- function(input, output, data_reactive) {
   output$kpi_2 <- renderUI({
+    data <- data_reactive()
+
     data_max <- filter(data, year == input$range[2])
     data_pre <- filter(data, year == input$range[2] - 1)
 
@@ -58,8 +62,10 @@ kpi_2 <- function(input, output, data) {
   })
 }
 
-kpi_3 <- function(input, output, data) {
+kpi_3 <- function(input, output, data_reactive) {
   output$kpi_3 <- renderUI({
+    data <- data_reactive()
+
     data_max <- filter(data, year == input$range[2])
     data_min <- filter(data, year == input$range[1])
 

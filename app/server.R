@@ -45,18 +45,18 @@ server <- function (input, output, session) {
   filter_by_region(input, session, data_update)
   filter_by_community_type(input, session, data_update)
 
-  download_data(output, data = isolate(data_by_area_range()))
+  download_data(output, data = data_by_area_range())
 
   # main panel
   current_area(input, output)
 
-  kpi_1(input, output, data = isolate(data_by_area_lastest_year()))
-  kpi_2(input, output, data = isolate(data_by_area_unit()))
-  kpi_3(input, output, data = isolate(data_by_area_unit()))
+  kpi_1(input, output, data_by_area_lastest_year)
+  kpi_2(input, output, data_by_area_unit)
+  kpi_3(input, output, data_by_area_unit)
 
-  plot_line(input, output, data = isolate(data_by_area_range()))
-  plot_bar(input, output, data = isolate(data_by_area_lastest_year()))
+  plot_line(input, output, data_by_area_range)
+  plot_bar(input, output, data_by_area_lastest_year)
   plot_map(input, output)
 
-  data_table(input, output, data = isolate(data_by_area_range()))
+  data_table(input, output, data_by_area_range)
 }

@@ -1,4 +1,4 @@
-plot_line <- function(input, output, data) {
+plot_line <- function(input, output, data_reactive) {
   output$line_title <- renderText({
     text_output <- paste0("Trend (", input$range[1], "-", input$range[2], ")")
 
@@ -10,7 +10,8 @@ plot_line <- function(input, output, data) {
   })
 
   output$line <- renderHighchart({
-    data_plot <- data %>%
+    data_plot <-
+      data_reactive() %>%
       group_by(year) %>%
       summarise_at(
         vars(Violent = violent_crime, Property = property_crime),
