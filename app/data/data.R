@@ -1,5 +1,32 @@
 library(dplyr)
 
+# generate app_data
+app_data <-
+  read.csv("ucr.csv") %>%
+  select(
+    year,
+    county = county_name,
+    region,
+    rural = community_type,
+    population,
+    murder,
+    sexual_assault,
+    robbery,
+    aggravated_assault,
+    burglary,
+    larceny_theft,
+    motor_vehicle_theft,
+    arson
+  ) %>%
+  mutate(
+    region = case_when(
+      region == "Northern - Cook" ~ "Cook",
+      region %in% c("Northern - Collar", "Northern - Other") ~ "Northern",
+      TRUE ~ as.character(region)
+    ),
+    violent_crime = murder + sexual_assault + robbery + aggravated_assault,
+    property_crime = burglary + larceny_theft + motor_vehicle_theft + arson
+  )
 
 # generate app_map
 app_map <- rmapshaper::ms_simplify(icjiar::counties, keep = 0.005)
@@ -12,19 +39,6 @@ app_map@data <-
       rural_urban_2010 == 3 ~ "Mostly Urban",
       TRUE ~ "Completely Urban"
     )
-  )
-
-# generate app_data
-app_data <- icjiar::crimes_isp %>%
-  left_join(select(app_map@data, county = name, region, rural)) %>%
-  left_join(select(icjiar::populations, -fips)) %>%
-  select(
-    year,
-    county,
-    region,
-    rural,
-    population,
-    violent_crime:arson
   )
 
 # save data for app
