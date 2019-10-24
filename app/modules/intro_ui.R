@@ -12,17 +12,17 @@
       "originally published by Illinois State Police.",
       "All data used in the Data Explorer are available at",
       a(
-        strong("the ICJIA website"),
+        strong("ICJIA Research Hub"),
         ICON_EXTERNAL_LINK,
         ".",
-        href = paste0(URLS$home, "research/overview#tab_research-data"),
+        href = paste0(URLS$home, "researchhub/datasets"),
         target="_blank"
       ),
       "Learn more about the UCR data by reading",
       a(
         strong("this article"),
         ICON_EXTERNAL_LINK,
-        href = paste0(URLS$home, "articles/about-uniform-crime-reporting-program-data"),
+        href = paste0(URLS$home, "researchhub/articles/about-uniform-crime-reporting-program-data"),
         target="_blank"
       ),
       " (Hughes, 2016)."

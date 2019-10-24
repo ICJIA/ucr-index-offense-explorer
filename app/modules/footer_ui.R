@@ -7,6 +7,7 @@
     a(
       "Subscribe Now",
       href = URLS$cj_dispatch,
+      target = "_blank",
       class = "btn btn-default",
       style = "font-family:'Gentium Book Basic'; font-size:16px;"
     )
@@ -87,8 +88,6 @@
 }
 
 .footer_copyright_ui <- function() {
-  href <- URLS$home
-
   column(
     12,
     style = "font-size: 13px; text-align:center;",
@@ -97,7 +96,7 @@
       format(Sys.Date(), "%Y"),
       a(
         "Illinois Criminal Justice Information Authority",
-        href = href,
+        href = URLS$home,
         target = "_blank",
         id = "social",
         style = "margin:0;"
@@ -105,7 +104,7 @@
       "  | ",
       a(
         "Privacy",
-        href = paste0(href, "about/privacy"),
+        href = paste0(URLS$home, "about/privacy"),
         target = "_blank",
         id = "social",
         style = "margin:0;"

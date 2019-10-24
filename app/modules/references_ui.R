@@ -6,7 +6,7 @@ references_ui <- function() {
     a(
       em("About Uniform Crime Reporting Program data."),
       ICON_EXTERNAL_LINK,
-      href = paste0(URLS$home, "articles/about-uniform-crime-reporting-program-data"),
+      href = paste0(URLS$home, "researchhub/articles/about-uniform-crime-reporting-program-data"),
       target = "_blank"
     ),
     " Chicago, IL: Illinois Criminal Justice Information Authority.",

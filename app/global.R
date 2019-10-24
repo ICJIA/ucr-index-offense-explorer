@@ -46,7 +46,7 @@ COMMUNITY_TYPES <- c("Completely Rural", "Mostly Rural", "Mostly Urban", "Comple
 ICON_EXTERNAL_LINK <- tags$sup(style="color: grey;", icon("external-link", "fa"))
 
 URLS <- list(
-  home        = "http://www.icjia.state.il.us/",
+  home        = "http://icjia.illinois.gov/",
   cj_dispatch = "http://visitor.r20.constantcontact.com/manage/optin?v=001MqUcqqvjwLCJXlLMSWbTe3zHHmEQgFeBuHvBcJWTbwgrxFbDSGx4HSUPpI6DJWMUPgbljtLxffqIcGFTgCnr-auak88ybvRxpoJlTMGPtZs%3D",
   facebook    = "http://www.facebook.com/ICJIA",
   twitter     = "http://www.twitter.com/ICJIA_Illinois",
