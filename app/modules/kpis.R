@@ -1,24 +1,36 @@
+compute_percent_change <- function(data, category, year1, year2) {
+  sum2 <- function(...) sum(..., na.rm = TRUE)
+
+  data %>%
+    rename(v = violent_crime, p = property_crime) %>%
+    list(y1 = filter(., year == year1), y2 = filter(., year == year2)) %>%
+    with({
+      if (category == "Violent") list(y1 = sum2(y1$v), y2 = sum2(y2$v))
+      else if (category == "Property") list(y1 = sum2(y1$p), y2 = sum2(y2$p))
+      else list(y1 = sum2(y1$v, y1$p), y2 = sum2(y2$v, y2$p))
+    }) %>%
+    with({ (y2 - y1) / y1 * 100 })
+}
+
 kpi_1 <- function(input, output, data_reactive) {
   output$kpi_1 <- renderUI({
     data <- data_reactive()
 
-    if (input$category == "Violent") {
-      value <- sum(data$violent_crime, na.rm = TRUE)
-    } else if (input$category == "Property") {
-      value <- sum(data$property_crime, na.rm = TRUE)
-    } else {
-      value <- sum(data$violent_crime, data$property_crime, na.rm = TRUE)
-    }
-
-    if(input$unit == "Count") {
-      desc <- paste0("Offenses in ", input$range[2])
-      if (value > 10000) {
-        value <- paste0(round(value / 1000), "K")
+    value <-
+      {
+        if (input$category == "Violent") sum(data$violent_crime, na.rm = TRUE)
+        else if (input$category == "Property") sum(data$property_crime, na.rm = TRUE)
+        else sum(data$violent_crime, data$property_crime, na.rm = TRUE)
+      } %>%
+      {
+        if (input$unit == "Count")
+          if (. > 10000) paste0(round(. / 1000), "K") else .
+        else apply_rate(., sum(data$population, na.rm = TRUE))
       }
-    } else {
-      desc <- paste0("Crime rate in ", input$range[2])
-      value <- apply_rate(value, sum(data$population, na.rm = TRUE))
-    }
+
+    desc <-
+      { if (input$unit == "Count") "Offenses in" else "Crime rate in" } %>%
+      paste(input$range[2]) 
 
     tagList(
       tags$h1(value),
@@ -33,23 +45,15 @@ kpi_1 <- function(input, output, data_reactive) {
 
 kpi_2 <- function(input, output, data_reactive) {
   output$kpi_2 <- renderUI({
-    data <- data_reactive()
-
-    data_max <- filter(data, year == input$range[2])
-    data_pre <- filter(data, year == input$range[2] - 1)
-
-    if (input$category == "Violent") {
-      value_max <- sum(data_max$violent_crime, na.rm = TRUE)
-      value_pre <- sum(data_pre$violent_crime, na.rm = TRUE)
-    } else if (input$category == "Property") {
-      value_max <- sum(data_max$property_crime, na.rm = TRUE)
-      value_pre <- sum(data_pre$property_crime, na.rm = TRUE)
-    } else {
-      value_max <- sum(data_max$violent_crime, data_max$property_crime, na.rm = TRUE)
-      value_pre <- sum(data_pre$violent_crime, data_pre$property_crime, na.rm = TRUE)
-    }
-
-    value <- paste0(round((value_max - value_pre) / value_pre * 100, 1), "%")
+    value <-
+      data_reactive() %>%
+      compute_percent_change(
+        category = input$category,
+        year1 = input$range[2] - 1,
+        year2 = input$range[2]
+      ) %>%
+      round(1) %>%
+      paste0("%")
 
     tagList(
       tags$h1(value),
@@ -64,23 +68,15 @@ kpi_2 <- function(input, output, data_reactive) {
 
 kpi_3 <- function(input, output, data_reactive) {
   output$kpi_3 <- renderUI({
-    data <- data_reactive()
-
-    data_max <- filter(data, year == input$range[2])
-    data_min <- filter(data, year == input$range[1])
-
-    if (input$category == "Violent"){
-      value_max <- sum(data_max$violent_crime, na.rm = TRUE)
-      value_min <- sum(data_min$violent_crime, na.rm = TRUE)
-    } else if (input$category == "Property"){
-      value_max <- sum(data_max$property_crime, na.rm = TRUE)
-      value_min <- sum(data_min$property_crime, na.rm = TRUE)
-    } else {
-      value_max <- sum(data_max$violent_crime, data_max$property_crime, na.rm = TRUE)
-      value_min <- sum(data_min$violent_crime, data_min$property_crime, na.rm = TRUE)
-    }
-
-    value <- paste0(round((value_max - value_min) / value_min * 100, 1), "%")
+    value <-
+      data_reactive() %>%
+      compute_percent_change(
+        category = input$category,
+        year1 = input$range[1],
+        year2 = input$range[2]
+      ) %>%
+      round(1) %>%
+      paste0("%")
 
     tagList(
       tags$h1(value),

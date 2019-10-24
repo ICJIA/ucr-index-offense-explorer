@@ -1,81 +1,78 @@
+get_map_attr <- function(data, input) {
+  count_or_rate <- function(count, population, unit) {
+    if (unit == "count") count
+    else apply_rate(count, population)
+  }
+
+  filter_latest_year(data, input) %>%
+    {
+      if (input$category == "Property")
+        mutate(., data = count_or_rate(property_crime, population, input$unit))
+      else if (input$category == "Violent")
+        mutate(., data = count_or_rate(violent_crime, population, input$unit))
+      else {
+        group_by(., county) %>%
+        summarise(
+          data = count_or_rate(
+            sum(violent_crime, property_crime),
+            sum(population),
+            input$unit
+          )
+        )
+      }
+    } %>%
+    select(name = county, data)
+}
+
+get_map_data <- function(input) {
+  map_data <- APP_MAP
+  map_attr <- get_map_attr(APP_DATA, input)
+  
+  map_data@data <-
+    map_data@data %>%
+    mutate(name = as.character(name)) %>%
+    left_join(map_attr, by = "name")
+  
+  map_data
+}
+
+filter_map_data <- function(data, input) {
+  data %>%
+    {
+      if (input$region != "All") {
+        if (input$region == "Cook") .[.$name == "Cook", ]
+        else .[.$region == input$region, ]
+      }
+      else .
+    } %>%
+    { if (input$rural != "All") .[.$rural == input$rural, ] else . } %>%
+    { if (input$county != "All") .[.$name == input$county, ] else . }
+}
+
 plot_map <- function(input, output) {
   output$map_title <- renderText({
-    text_output <- paste0("Geography (", input$range[2], ")", "*")
-
-    if(input$category != "All"){
-      paste(text_output, input$category, sep=": ")
-    } else {
-      text_output
-    }
+    paste0("Geography (", input$range[2], ")", "*") %>%
+      decorate_plot_title(input$category)
   })
 
   output$map <- renderLeaflet({
-    map_selected <- APP_MAP
-    data_map <- filter_latest_year(APP_DATA, input)
+    map_data <- get_map_data(input)
+    map_filtered <- filter_map_data(map_data, input)
 
-    if (input$category == "Property") {
-      
-      if (input$unit == "Count") {
-        my_attr <- mutate(data_map, data = property_crime)
-      } else {
-        my_attr <- mutate(data_map, data = apply_rate(property_crime, population))
-      }
-      my_attr <- select(my_attr, name = county, data)
+    fill_color <-
+      {
+        if (input$category == "Violent") "Reds"
+        else if (input$category == "Property") "Purples"
+        else "RdPu"
+      } %>%
+      colorQuantile(map_data$data)
 
-    } else if (input$category == "Violent") {
-
-      if (input$unit == "Count") {
-        my_attr <- mutate(data_map, data = violent_crime)
-      } else {
-        my_attr <- mutate(data_map, data = apply_rate(violent_crime, population))
-      }
-      my_attr <- select(my_attr, name = county, data)
-
-    } else {
-      my_attr <- data_map %>%
-        group_by(name = county) %>%
-        summarise(
-          data = ifelse(
-            input$unit == "Count",
-            sum(violent_crime, property_crime),
-            apply_rate(sum(violent_crime, property_crime), sum(population))
-          )
-        )
-    }
-
-    map_selected@data <-
-      map_selected@data %>%
-      mutate(name = as.character(name)) %>%
-      left_join(my_attr, by = "name")
-    map_selected2 <- map_selected
-
-    if (input$region != "All") {
-      if (input$region == "Cook") {
-        map_selected2 <- map_selected2[map_selected2$name == "Cook", ]
-      } else {
-        map_selected2 <- map_selected2[map_selected2$region == input$region, ]
-      }
-    }
-    if (input$rural != "All") {
-      map_selected2 <- map_selected2[map_selected2$rural == input$rural, ]
-    }
-    if (input$county != "All") {
-      map_selected2 <- map_selected2[map_selected2$name == input$county, ]
-    }
-
-    fill_palette <- ifelse(
-      input$category == "Violent", "Reds", ifelse(
-        input$category == "Property", "Purples", "RdPu"
-      )
-    )
-    fill_color <- colorQuantile(fill_palette, map_selected$data)
-
-    map_selected2 %>%
+    map_filtered %>%
       leaflet() %>%
       setView(lng = -89.5, lat = 39.8, zoom = 6) %>%
       addProviderTiles("CartoDB.Positron") %>%
       addPolygons(
-        data        = map_selected,
+        data        = map_data,
         weight      = 1.1,
         color       = "darkgray",
         fillOpacity = 0.2,
@@ -88,7 +85,7 @@ plot_map <- function(input, output) {
         fillColor   = ~fill_color(data),
         label       = ~paste0(
           as.character(name),
-          ifelse(input$unit == "Count", " (count)", " (rate)"),
+          { if (input$unit == "Count") " (count)" else " (rate)" },
           ": ",
           prettyNum(round(data, 2), big.mark=",")
         ),
