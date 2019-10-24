@@ -55,7 +55,6 @@ ui <- shinyUI(fluidPage(
       id = "main",
       width = 9,
       intro_ui(),
-      tags$hr(style = "border-color: #ddd;"),
       kpis_ui(),
       plots_ui(),
       data_table_ui()
