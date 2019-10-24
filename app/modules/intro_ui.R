@@ -1,8 +1,8 @@
-current_area_ui <- function() {
+.current_area_ui <- function() {
   h1(textOutput("current_area"), style="margin:0 0 10px 0; display:inline-block;")
 }
 
-description_ui <- function() {
+.description_ui <- function() {
   list(
     p(
       strong("Uniform Crime Report Data Explorer"),
@@ -41,8 +41,8 @@ intro_ui <- function() {
     style = "margin: 0 auto;",
     column(
       12,
-      current_area_ui(),
-      description_ui()
+      .current_area_ui(),
+      .description_ui()
     )
   )
 }

@@ -1,4 +1,4 @@
-get_map_attr <- function(data, input) {
+.get_map_attr <- function(data, input) {
   count_or_rate <- function(count, population, unit) {
     if (unit == "count") count
     else apply_rate(count, population)
@@ -24,9 +24,9 @@ get_map_attr <- function(data, input) {
     select(name = county, data)
 }
 
-get_map_data <- function(input) {
+.get_map_data <- function(input) {
   map_data <- APP_MAP
-  map_attr <- get_map_attr(APP_DATA, input)
+  map_attr <- .get_map_attr(APP_DATA, input)
   
   map_data@data <-
     map_data@data %>%
@@ -36,7 +36,7 @@ get_map_data <- function(input) {
   map_data
 }
 
-filter_map_data <- function(data, input) {
+.filter_map_data <- function(data, input) {
   data %>%
     {
       if (input$region != "All") {
@@ -56,8 +56,8 @@ plot_map <- function(input, output) {
   })
 
   output$map <- renderLeaflet({
-    map_data <- get_map_data(input)
-    map_filtered <- filter_map_data(map_data, input)
+    map_data <- .get_map_data(input)
+    map_filtered <- .filter_map_data(map_data, input)
 
     fill_color <-
       {

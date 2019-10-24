@@ -1,4 +1,4 @@
-gather_selected <- function(x, type, ...) {
+.gather_selected <- function(x, type, ...) {
   capitalize <- function(x)
     paste0(toupper(substring(x, 1, 1)), substring(x, 2))
   
@@ -29,13 +29,13 @@ plot_bar <- function(input, output, data_reactive) {
       {
         if (input$category == "All") {
           rbind(
-            gather_selected(., "Violent", murder:aggravated_assault),
-            gather_selected(., "Property", burglary:arson)
+            .gather_selected(., "Violent", murder:aggravated_assault),
+            .gather_selected(., "Property", burglary:arson)
           )
         } else {
           if (input$category == "Violent")
-            gather_selected(., murder:aggravated_assault, type = "Violent")
-          else gather_selected(., burglary:arson, type = "Property")
+            .gather_selected(., murder:aggravated_assault, type = "Violent")
+          else .gather_selected(., burglary:arson, type = "Property")
         }
       }
 

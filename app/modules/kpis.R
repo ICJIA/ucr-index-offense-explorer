@@ -1,4 +1,4 @@
-compute_percent_change <- function(data, category, year1, year2) {
+.compute_percent_change <- function(data, category, year1, year2) {
   sum2 <- function(...) sum(..., na.rm = TRUE)
 
   data %>%
@@ -47,7 +47,7 @@ kpi_2 <- function(input, output, data_reactive) {
   output$kpi_2 <- renderUI({
     value <-
       data_reactive() %>%
-      compute_percent_change(
+      .compute_percent_change(
         category = input$category,
         year1 = input$range[2] - 1,
         year2 = input$range[2]
@@ -70,7 +70,7 @@ kpi_3 <- function(input, output, data_reactive) {
   output$kpi_3 <- renderUI({
     value <-
       data_reactive() %>%
-      compute_percent_change(
+      .compute_percent_change(
         category = input$category,
         year1 = input$range[1],
         year2 = input$range[2]

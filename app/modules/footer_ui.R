@@ -1,4 +1,4 @@
-footer_social_dispatch_ui <- function() {
+.footer_social_dispatch_ui <- function() {
   list(
     h3(
       "Sign up for the cj dispatch",
@@ -13,7 +13,7 @@ footer_social_dispatch_ui <- function() {
   )
 }
 
-footer_social_buttons_ui <- function() {
+.footer_social_buttons_ui <- function() {
   div(
     style = "margin-top: 15px;",
     a(
@@ -61,16 +61,16 @@ footer_social_buttons_ui <- function() {
   )
 }
 
-footer_social_ui <- function() {
+.footer_social_ui <- function() {
   column(
     12,
     style = "font-size: 10px; margin-top:10px; text-align:center; align-items: center",
-    footer_social_dispatch_ui(),
-    footer_social_buttons_ui()
+    .footer_social_dispatch_ui(),
+    .footer_social_buttons_ui()
   )
 }
 
-footer_contact_ui <- function() {
+.footer_contact_ui <- function() {
   column(
     12,
     style = "font-size: 11px; margin-top:15px; text-align:center;",
@@ -86,7 +86,7 @@ footer_contact_ui <- function() {
   )
 }
 
-footer_copyright_ui <- function() {
+.footer_copyright_ui <- function() {
   href <- URLS$home
 
   column(
@@ -118,9 +118,9 @@ footer_ui <- function() {
   tags$div(
     class="footer",
     fluidRow(
-      footer_social_ui(),
-      footer_contact_ui(),
-      footer_copyright_ui()
+      .footer_social_ui(),
+      .footer_contact_ui(),
+      .footer_copyright_ui()
     )
   )
 }

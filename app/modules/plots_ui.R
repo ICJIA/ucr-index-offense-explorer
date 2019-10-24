@@ -1,8 +1,8 @@
-plots_plot_line_ui <- function() {
+.plot_line_ui <- function() {
   column(4, class = "plot_line", h3(textOutput("line_title")), withSpinner(highchartOutput("line"), type = 4))
 }
 
-plots_plot_bar_ui <- function() {
+.plot_bar_ui <- function() {
   list(
     column(4, class = "plot_bar", h3(textOutput("bar_title"), id="bar-title-text"), withSpinner(highchartOutput("bar"), type = 4)),
     bsPopover(
@@ -16,7 +16,7 @@ plots_plot_bar_ui <- function() {
   )
 }
 
-plots_plot_map_ui <- function() {
+.plot_map_ui <- function() {
   list(
     column(4, class = "plot_map", h3(textOutput("map_title"), id="map-title-text"), withSpinner(leafletOutput("map"), type = 4)),
     bsPopover(
@@ -33,8 +33,8 @@ plots_plot_map_ui <- function() {
 plots_ui <- function() {
   fluidRow(
     class = "plots",
-    plots_plot_line_ui(),
-    plots_plot_bar_ui(),
-    plots_plot_map_ui()
+    .plot_line_ui(),
+    .plot_bar_ui(),
+    .plot_map_ui()
   )
 }
