@@ -132,7 +132,6 @@ button#toggleSidebar:hover {
 .kpi {
   width: 90%;
   margin: 10px auto;
-  border: 1px solid lightgrey;
   border-radius: 5px;
   color: white;
   background: #466c8c;
@@ -142,7 +141,6 @@ button#toggleSidebar:hover {
 .highcharts-container,
 .leaflet-container {
   background-color: white;
-  border: 1px solid lightgrey;
   border-radius: 5px;
 }
 
