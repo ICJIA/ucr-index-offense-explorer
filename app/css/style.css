@@ -146,6 +146,13 @@ button#toggleSidebar:hover {
   border-radius: 5px;
 }
 
+.plot_bar,
+.plot_line,
+.plot_map {
+  width: 90%;
+  margin: 10px auto;
+}
+
 .btn,
 .btn-default {
   margin: 5px 5px;
@@ -187,10 +194,6 @@ button#toggleSidebar:hover {
     font-size: 16px;
   }
 
-  #data-table {
-    display: block;
-  }
-
   .kpis {
     flex-direction: row;
     margin-bottom: 10px;
@@ -198,5 +201,17 @@ button#toggleSidebar:hover {
 
   .kpi {
     width: 32%;
+  }
+}
+
+@media (min-width: 980px) {
+  .plot_bar,
+  .plot_line,
+  .plot_map {
+    width: 32%;
+  }
+
+  #data-table {
+    display: block;
   }
 }
