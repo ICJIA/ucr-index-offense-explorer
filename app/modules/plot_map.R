@@ -30,7 +30,6 @@
   
   map_data@data <-
     map_data@data %>%
-    mutate(name = as.character(name)) %>%
     left_join(map_attr, by = "name")
   
   map_data
