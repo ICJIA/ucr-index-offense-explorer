@@ -38,7 +38,7 @@ APP_DATA <- app_data
 
 APP_MAP <- app_map
 
-APP_VERSION <- "1.0.4"
+APP_VERSION <- "1.1.0"
 
 COMMUNITY_TYPES <- c("Completely Rural", "Mostly Rural", "Mostly Urban", "Completely Urban")
 
