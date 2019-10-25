@@ -14,7 +14,6 @@ library(leaflet)
 library(highcharter)
 library(dplyr)
 library(tidyr)
-library(rgdal)
 library(shinycssloaders)
 
 
