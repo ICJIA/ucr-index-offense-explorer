@@ -23,7 +23,10 @@ source("modules/footer_ui.R")
 #-------------------------------------------------------------------------------
 ui <- shinyUI(fluidPage(
   useShinyjs(),
-  extendShinyjs(text = "shinyjs.resize = function() { $(window).trigger('resize'); }"),
+  extendShinyjs(
+    text = "shinyjs.resize = function() { $(window).trigger('resize'); }",
+    functions = "resize"
+  ),
 
   tags$head(
     includeCSS(path = "css/style.css"),
