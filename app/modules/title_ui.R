@@ -7,7 +7,7 @@ title_ui <- function(url) {
         10,
         style="display:flex; align-items: center;",
         actionButton("toggleSidebar", icon("bars")),
-        span(id = "text-identity", "Uniform Crime Report Data Explorer")
+        span(id = "text-identity", "Uniform Crime Report Offense Data Explorer")
       ),
       column(
         2,

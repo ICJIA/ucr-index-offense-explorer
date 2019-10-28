@@ -5,7 +5,7 @@
 .description_ui <- function() {
   list(
     p(
-      strong("Uniform Crime Report Data Explorer"),
+      strong("Uniform Crime Report Offense Data Explorer"),
       "offers an interactive interface to the",
       em("Crime in Illinois Annual Uniform Crime Report (UCR)"),
       paste0("data (", min(APP_DATA$year), "-", max(APP_DATA$year), ") "),
