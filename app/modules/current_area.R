@@ -15,6 +15,6 @@ current_area <- function(input, output) {
         if (county != "All") paste(county, "County") else rural
       } else "Illinois"
     } %>%
-      paste("UCR Profile:", ., sep=" ")
+      paste("Index Offenses in", ., sep=" ")
   })
 }
