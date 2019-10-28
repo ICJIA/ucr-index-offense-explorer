@@ -13,6 +13,8 @@ current_area <- function(input, output) {
         }
       } else if (rural != "All") {
         if (county != "All") paste(county, "County") else rural
+      } else if (county != "All") {
+        paste(county, "County")
       } else "Illinois"
     } %>%
       paste("Index Offenses in", ., sep=" ")
