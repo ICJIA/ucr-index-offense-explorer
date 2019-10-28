@@ -24,7 +24,7 @@ app_data <-
       region %in% c("Northern - Collar", "Northern - Other") ~ "Northern",
       TRUE ~ as.character(region)
     ),
-    violent_crime = murder + sexual_assault + robbery + aggravated_assault,
+    person_crime = murder + sexual_assault + robbery + aggravated_assault,
     property_crime = burglary + larceny_theft + motor_vehicle_theft + arson
   )
 

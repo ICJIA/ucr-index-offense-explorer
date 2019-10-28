@@ -29,12 +29,12 @@ plot_bar <- function(input, output, data_reactive) {
       {
         if (input$category == "All") {
           rbind(
-            .gather_selected(., "Violent", murder:aggravated_assault),
+            .gather_selected(., "Person", murder:aggravated_assault),
             .gather_selected(., "Property", burglary:arson)
           )
         } else {
-          if (input$category == "Violent")
-            .gather_selected(., murder:aggravated_assault, type = "Violent")
+          if (input$category == "Person")
+            .gather_selected(., murder:aggravated_assault, type = "Person")
           else .gather_selected(., burglary:arson, type = "Property")
         }
       }
@@ -48,7 +48,7 @@ plot_bar <- function(input, output, data_reactive) {
             mapping = hcaes(
               x = category,
               y = count,
-              group = factor(type, levels = c("Violent", "Property"))
+              group = factor(type, levels = c("Person", "Property"))
             )
           )
         } else {
@@ -57,7 +57,7 @@ plot_bar <- function(input, output, data_reactive) {
             type = "column",
             mapping = hcaes(x = category, y = count),
             name = input$category,
-            color = if (input$category == "Violent") "#f45b5b" else "#8085e9"
+            color = if (input$category == "Person") "#f45b5b" else "#8085e9"
           )
         }
       } %>%

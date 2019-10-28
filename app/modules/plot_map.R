@@ -8,13 +8,13 @@
     {
       if (input$category == "Property")
         mutate(., data = count_or_rate(property_crime, population, input$unit))
-      else if (input$category == "Violent")
-        mutate(., data = count_or_rate(violent_crime, population, input$unit))
+      else if (input$category == "Person")
+        mutate(., data = count_or_rate(person_crime, population, input$unit))
       else {
         group_by(., county) %>%
         summarise(
           data = count_or_rate(
-            sum(violent_crime, property_crime),
+            sum(person_crime, property_crime),
             sum(population),
             input$unit
           )
@@ -60,7 +60,7 @@ plot_map <- function(input, output) {
 
     fill_color <-
       {
-        if (input$category == "Violent") "Reds"
+        if (input$category == "Person") "Reds"
         else if (input$category == "Property") "Purples"
         else "RdPu"
       } %>%

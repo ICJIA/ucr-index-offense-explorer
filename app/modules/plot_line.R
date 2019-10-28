@@ -9,7 +9,7 @@ plot_line <- function(input, output, data_reactive) {
       data_reactive() %>%
       group_by(year) %>%
       summarise_at(
-        vars(Violent = violent_crime, Property = property_crime),
+        vars(Person = person_crime, Property = property_crime),
         function(x) {
           if (input$unit == "Count") sum(x, na.rm = TRUE)
           else apply_rate(sum(x, na.rm = TRUE), sum(.$population))
@@ -21,8 +21,8 @@ plot_line <- function(input, output, data_reactive) {
         if (input$category == "All") {
           hc_add_series(
             .,
-            name  = "Violent",
-            data  = data$Violent,
+            name  = "Person",
+            data  = data$Person,
             color = "#f45b5b"
           ) %>% 
           hc_add_series(
@@ -35,7 +35,7 @@ plot_line <- function(input, output, data_reactive) {
             .,
             name  = input$category,
             data  = data[[input$category]],
-            color = if (input$category == "Violent") "#f45b5b" else "#8085e9"
+            color = if (input$category == "Person") "#f45b5b" else "#8085e9"
           ) %>%
           hc_legend(enabled = FALSE)
         }

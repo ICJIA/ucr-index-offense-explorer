@@ -2,12 +2,12 @@
   sum2 <- function(...) sum(..., na.rm = TRUE)
 
   data %>%
-    rename(v = violent_crime, p = property_crime) %>%
+    rename(p1 = person_crime, p2 = property_crime) %>%
     list(y1 = filter(., year == year1), y2 = filter(., year == year2)) %>%
     with({
-      if (category == "Violent") list(y1 = sum2(y1$v), y2 = sum2(y2$v))
-      else if (category == "Property") list(y1 = sum2(y1$p), y2 = sum2(y2$p))
-      else list(y1 = sum2(y1$v, y1$p), y2 = sum2(y2$v, y2$p))
+      if (category == "Person") list(y1 = sum2(y1$p1), y2 = sum2(y2$p1))
+      else if (category == "Property") list(y1 = sum2(y1$p2), y2 = sum2(y2$p2))
+      else list(y1 = sum2(y1$p1, y1$p2), y2 = sum2(y2$p1, y2$p2))
     }) %>%
     with({ (y2 - y1) / y1 * 100 })
 }
@@ -18,9 +18,9 @@ kpi_1 <- function(input, output, data_reactive) {
 
     value <-
       {
-        if (input$category == "Violent") sum(data$violent_crime, na.rm = TRUE)
+        if (input$category == "Person") sum(data$person_crime, na.rm = TRUE)
         else if (input$category == "Property") sum(data$property_crime, na.rm = TRUE)
-        else sum(data$violent_crime, data$property_crime, na.rm = TRUE)
+        else sum(data$person_crime, data$property_crime, na.rm = TRUE)
       } %>%
       {
         if (input$unit == "Count")

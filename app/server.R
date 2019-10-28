@@ -34,7 +34,7 @@ server <- function (input, output, session) {
     filter_latest_year(data_by_area(), input)
   })
   data_by_area_unit <- reactive({
-    select_data_unit(data_by_area(), input, violent_crime, property_crime)
+    select_data_unit(data_by_area(), input, person_crime, property_crime)
   })
 
   # title panel

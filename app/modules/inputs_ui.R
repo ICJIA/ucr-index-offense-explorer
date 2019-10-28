@@ -11,7 +11,7 @@ input_category_ui <- function() {
   radioButtons(
     "category",
     "Select crime category",
-    choices = c("All", "Property", "Violent"),
+    choices = c("All", "Person", "Property"),
     selected = "All"
   )
 }
