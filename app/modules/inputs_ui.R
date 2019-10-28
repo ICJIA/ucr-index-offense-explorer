@@ -50,7 +50,7 @@ input_community_ui <- function() {
     bsPopover(
       id = "rural-text",
       title = "What is community type?",
-      content = "The community type of a county is based on the definition of \"rural\" by the U.S. Census Bureau (Ratcliffe et al. 2016). The original categorization consists of three categories: (1) completely rural, (2) mostly rural, and (3) mostly urban. The UCR Offense Data Explorer has added the fourth category, completely urban, for counties consisting fully of urban areas as defined by the Bureau. Please note that the categorization in this Explorer is based on the latest Census data (2010) and may diverge from the true status of each county for other years.",
+      content = "The community type of a county is based on the definition of \"rural\" by the U.S. Census Bureau (Ratcliffe et al. 2016). The original categorization consists of three categories: (1) completely rural, (2) mostly rural, and (3) mostly urban. The UCR Index Offense Explorer has added the fourth category, completely urban, for counties consisting fully of urban areas as defined by the Bureau. Please note that the categorization in this Explorer is based on the latest Census data (2010) and may diverge from the true status of each county for other years.",
       placement = "right",
       trigger = "hover",
       options = list(container = 'body')

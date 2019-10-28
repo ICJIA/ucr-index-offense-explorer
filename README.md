@@ -1,12 +1,12 @@
-# Uniform Crime Report Data Explorer
+# Uniform Crime Report Index Offense Explorer
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository stores R scripts as well as other necessary files for an R Shiny application titled "Uniform Crime Report Data Explorer."
+This repository stores R scripts as well as other necessary files for an R Shiny application titled "Uniform Crime Report Index Offense Explorer."
 
 ## About this application
 
-Uniform Crime Report Data Explorer offers an interactive interface to the *Crime in Illinois Annual Uniform Crime Report (UCR)* data (1982-2016), originally provided by Illinois State Police and prepared by ICJIA. All datasets used in this dashboard are freely available at [the ICJIA website](http://www.icjia.state.il.us/research/overview#tab_research-data). To learn more about the UCR data, read [this article](http://www.icjia.state.il.us/articles/about-uniform-crime-reporting-program-data) by ICJIA staff.
+Uniform Crime Report (UCR) Index Offense Explorer offers an interactive interface to the _Crime in Illinois Annual Uniform Crime Report_ Index Crime offense data (1982-2016), originally provided by Illinois State Police and prepared by ICJIA. All datasets used in this dashboard are freely available at [the ICJIA website](http://www.icjia.state.il.us/research/overview#tab_research-data). To learn more about the UCR data, read [this article](http://www.icjia.state.il.us/articles/about-uniform-crime-reporting-program-data) by ICJIA staff.
 
 ## How to try the application
 

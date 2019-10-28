@@ -31,7 +31,7 @@ ui <- shinyUI(fluidPage(
   tags$head(
     includeCSS(path = "css/style.css"),
     includeHTML("google-analytics.html"),
-    tags$title("Uniform Crime Report Offense Data Explorer | ICJIA")
+    tags$title("Uniform Crime Report Index Offense Explorer | ICJIA")
   ),
 
   titlePanel(

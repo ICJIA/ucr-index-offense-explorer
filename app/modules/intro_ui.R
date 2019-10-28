@@ -5,12 +5,12 @@
 .description_ui <- function() {
   list(
     p(
-      strong("Uniform Crime Report Offense Data Explorer"),
+      strong("Uniform Crime Report (UCR) Index Offense Explorer"),
       "offers an interactive interface to the",
-      em("Crime in Illinois Annual Uniform Crime Report (UCR)"),
-      paste0("data (", min(APP_DATA$year), "-", max(APP_DATA$year), ") "),
+      em("Crime in Illinois Annual Uniform Crime Report"),
+      paste0("Index Crime offense data (", min(APP_DATA$year), "-", max(APP_DATA$year), ") "),
       "originally published by Illinois State Police.",
-      "All data used in the Data Explorer are available at",
+      "All data used in the Explorer are available at",
       a(
         strong("ICJIA Research Hub"),
         ICON_EXTERNAL_LINK,
