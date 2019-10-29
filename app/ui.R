@@ -166,6 +166,18 @@ ui <- shinyUI(fluidPage(
         style = "margin: 0 auto;",
         column(
           12,
+          p(
+            strong("WARNING: "),
+            "This app is depecreated and no longer maintained. For an updated version, try",
+            a(
+              strong("UCR Index Offense Explorer"),
+              icon_external_link,
+              ".",
+              href = "http://app.icjia.cloud/app/ucr-index-offense-explorer",
+              target="_blank"
+            ),
+            id="warning"
+          ),
           h1(textOutput("current"), style="margin:0 0 10px 0; display:inline-block;"),
           p(
             strong("Uniform Crime Report Data Explorer"),

@@ -12,21 +12,21 @@
 }
 */
 
-
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
 }
 
 body {
-  font-family: 'Gentium Book Basic', serif;
+  font-family: "Gentium Book Basic", serif;
   font-size: 16px;
 }
 
 h1,
 h3 {
-  font-family: 'Oswald', sans-serif;
+  font-family: "Oswald", sans-serif;
 }
 
 h2 {
@@ -63,11 +63,24 @@ a:-webkit-any-link {
   height: 60px;
 }
 
+#warning {
+  background-color: #ffe6e6;
+  border: 1px solid rgba(255, 0, 0, 0.5);
+  border-radius: 5px;
+  color: #990000;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+#warning a {
+  color: #990000 !important;
+}
+
 #text-identity {
   color: white;
   font-weight: 700;
   font-size: 14px;
-  font-family: 'Lato';
+  font-family: "Lato";
   margin: auto 5px;
   text-transform: uppercase;
   display: inline-block;
@@ -151,7 +164,8 @@ button#toggleSidebar:hover {
   border-radius: 5px;
 }
 
-.btn, .btn-default {
+.btn,
+.btn-default {
   margin: 5px 5px;
   color: white;
   border-color: #2e6da4;
@@ -160,10 +174,10 @@ button#toggleSidebar:hover {
 
 .btn:hover,
 .btn-default:hover,
-.btn-default:focus, 
-.btn-default:active:focus, 
+.btn-default:focus,
+.btn-default:active:focus,
 .btn-default:active:hover {
-  outline:0;
+  outline: 0;
   color: lightgrey;
   border-color: #204d74;
   background-color: #286090;
@@ -171,11 +185,11 @@ button#toggleSidebar:hover {
 
 .tab-name {
   font-size: 14px;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   text-transform: uppercase;
 }
 
-.popover-title  {
+.popover-title {
   font-size: 18px;
 }
 
@@ -183,26 +197,25 @@ button#toggleSidebar:hover {
   flex-shrink: 0;
   color: white;
   padding: 30px;
-  font-family: 'Lato';
+  font-family: "Lato";
   text-align: center;
   background-color: #1f3641;
 }
-
 
 @media (min-width: 768px) {
   #text-identity {
     font-size: 16px;
   }
-  
+
   #data-table {
     display: block;
   }
-  
+
   .kpis {
     flex-direction: row;
     margin-bottom: 10px;
   }
-  
+
   .kpi {
     width: 32%;
   }
