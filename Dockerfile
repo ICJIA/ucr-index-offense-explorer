@@ -16,21 +16,13 @@ RUN apt-get update && apt-get install -y \
 
 # system library dependency for the app
 RUN apt-get update && apt-get install -y \
-    libmpfr-dev
+    libxml2-dev
 
 # install R packages for basic shiny functionality
 RUN R -e "install.packages(c('shiny', 'rmarkdown'), repos='https://cloud.r-project.org/')"
 
-# install igraph, rgdal requirement
-RUN apt-get update && apt-get install -y \
-    libxml2-dev \
-    libgdal-dev \
-    libproj-dev
-
-# install R packages specfic to the app
-RUN R -e "install.packages(c('shinyjs', 'shinyBS', 'shinycssloaders', 'DT', 'leaflet', 'highcharter', 'dplyr', 'tidyr'))"
-RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.2-20.tar.gz', repos=NULL, type='source')"
-
+# install R packages
+RUN R -e "install.packages(c('shinyjs', 'shinyBS', 'shinycssloaders', 'DT', 'leaflet', 'highcharter', 'dplyr', 'tidyr'), repos='https://cloud.r-project.org/')"
 
 # copy the app to the image
 RUN mkdir /root/app
