@@ -51,5 +51,6 @@ URLS <- list(
   twitter     = "http://www.twitter.com/ICJIA_Illinois",
   youtube     = "https://www.youtube.com/channel/UCtZMzk8D3P4OixYTwsfPeKA",
   soundcloud  = "https://www.soundcloud.com/icjia",
-  github      = "https://github.com/ICJIA"
+  github      = "https://github.com/ICJIA",
+  ucr         = "https://www.isp.state.il.us/crime/ucrhome.cfm"
 )
