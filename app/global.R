@@ -1,10 +1,3 @@
-# Author: Bobae Kang (Bobae.Kang@illinois.gov)
-# Created: 2018-09-14
-# Last revised: 2018-09-14
-# Script title: global.R
-#-------------------------------------------------------------------------------
-
-
 # import packages
 library(shiny)
 library(shinyBS)
