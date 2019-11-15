@@ -22,3 +22,9 @@ install.packages(dependencies)
 ```
 
 Once all packages are installed, you are ready to start the application with the `shiny::runApp()` command, or if you are using RStudio, by clicking the `Run App` button.
+
+## License
+
+[MIT](http://opensource.org/licenses/MIT)
+
+Copyright (c) 2017 Illinois Criminal Justice Information Authority

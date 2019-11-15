@@ -1,5 +1,5 @@
-.compute_percent_change <- function(data, category, year1, year2) {
-  sum2 <- function(...) sum(..., na.rm = TRUE)
+.compute_percent_change <- function(data, category, year1, year2, keep_na) {
+  sum2 <- if (keep_na) function(...) sum(..., na.rm = TRUE) else sum
 
   data %>%
     rename(p1 = person_crime, p2 = property_crime) %>%
@@ -15,17 +15,23 @@
 kpi_1 <- function(input, output, data_reactive) {
   output$kpi_1 <- renderUI({
     data <- data_reactive()
+    sum2 <-
+      if (input$county == "All") function(...) sum(..., na.rm = TRUE)
+      else sum
 
     value <-
       {
-        if (input$category == "Person") sum(data$person_crime, na.rm = TRUE)
-        else if (input$category == "Property") sum(data$property_crime, na.rm = TRUE)
-        else sum(data$person_crime, data$property_crime, na.rm = TRUE)
+        if (input$category == "Person") sum2(data$person_crime)
+        else if (input$category == "Property") sum2(data$property_crime)
+        else sum2(data$person_crime, data$property_crime)
       } %>%
       {
-        if (input$unit == "Count")
-          if (. > 10000) paste0(round(. / 1000), "K") else .
-        else apply_rate(., sum(data$population, na.rm = TRUE))
+        if (is.na(.)) .
+        else {
+          if (input$unit == "Count")
+            if (. > 10000) paste0(round(. / 1000), "K") else .
+          else apply_rate(., sum2(data$population, na.rm = TRUE))
+        }
       }
 
     desc <-
@@ -50,7 +56,8 @@ kpi_2 <- function(input, output, data_reactive) {
       .compute_percent_change(
         category = input$category,
         year1 = input$range[2] - 1,
-        year2 = input$range[2]
+        year2 = input$range[2],
+        keep_na = input$county == "All"
       ) %>%
       round(1) %>%
       paste0("%")
@@ -73,7 +80,8 @@ kpi_3 <- function(input, output, data_reactive) {
       .compute_percent_change(
         category = input$category,
         year1 = input$range[1],
-        year2 = input$range[2]
+        year2 = input$range[2],
+        keep_na = input$county == "All"
       ) %>%
       round(1) %>%
       paste0("%")

@@ -7,7 +7,12 @@
     p(
       strong("Uniform Crime Report (UCR) Index Offense Explorer"),
       "offers an interactive interface to the",
-      em("Crime in Illinois Annual Uniform Crime Report"),
+      a(
+        strong("Crime in Illinois Annual Uniform Crime Report"),
+        ICON_EXTERNAL_LINK,
+        href = URLS$ucr,
+        target = "_blank"
+      ),
       paste0("Index Crime offense data (", min(APP_DATA$year), "-", max(APP_DATA$year), ") "),
       "originally published by Illinois State Police.",
       "All data used in the Explorer are available at",
